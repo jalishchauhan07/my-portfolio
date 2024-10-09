@@ -202,12 +202,39 @@ const SkillCategory = ({ title, skills }) => (
 const Portfolio = () => {
   const mountRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  function calculateWorkDuration(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Ensure startDate is not after endDate
+    if (start > end) {
+      return "Invalid dates. Start date cannot be after end date.";
+    }
+
+    // Calculate total months between the two dates
+    const totalMonths =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth());
+
+    if (totalMonths >= 12) {
+      const years = Math.floor(totalMonths / 12);
+      const remainingMonths = totalMonths % 12;
+      return remainingMonths > 0
+        ? `${years} years, ${remainingMonths} months`
+        : `${years} years`;
+    } else {
+      return `${totalMonths} months`;
+    }
+  }
   const experiences = [
     {
       title: "Backend Developer",
       company: "Dicot Innovation",
       location: "Ahmedabad, Gujarat",
-      duration: "09/2023 - Present",
+      duration:
+        "09/2023 - 10/07 (" +
+        calculateWorkDuration("2023-09-1", "2024-10-07") +
+        ")",
       description: [
         "Leveraged Express.js to manage server-side logic and RESTful APIs",
         "Ensured smooth and reliable performance through optimized code",
@@ -222,7 +249,10 @@ const Portfolio = () => {
       title: "Web Developer (Intern)",
       company: "Yudiz Solution",
       location: "Ahmedabad, Gujarat",
-      duration: "02/2023 - 08/2023",
+      duration:
+        "02/2023 - 08/2023 (" +
+        calculateWorkDuration("2023-02-1", "2023-08-30") +
+        ")",
       description: [
         "Developed interactive web applications using Phaser.js and Three.js",
         "Created real-time communication channels for multiplayer games",
