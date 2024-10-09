@@ -232,7 +232,7 @@ const Portfolio = () => {
       company: "Dicot Innovation",
       location: "Ahmedabad, Gujarat",
       duration:
-        "09/2023 - 10/07 (" +
+        "09/2023 - 10/2024 (" +
         calculateWorkDuration("2023-09-1", "2024-10-07") +
         ")",
       description: [
@@ -251,7 +251,7 @@ const Portfolio = () => {
       location: "Ahmedabad, Gujarat",
       duration:
         "02/2023 - 08/2023 (" +
-        calculateWorkDuration("2023-02-1", "2023-08-30") +
+        calculateWorkDuration("2023-02-1", "2023-08-01") +
         ")",
       description: [
         "Developed interactive web applications using Phaser.js and Three.js",
