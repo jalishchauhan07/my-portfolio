@@ -376,7 +376,7 @@ const Portfolio = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-gray-300 mb-8"
           >
-            Backend Developer
+            Full Stack Developer
           </motion.p>
           <motion.p>
             {/* Summary Section */}
