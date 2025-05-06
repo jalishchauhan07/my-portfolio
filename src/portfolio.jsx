@@ -228,12 +228,30 @@ const Portfolio = () => {
   }
   const experiences = [
     {
+      title: "Software Developer",
+      company: "Digilize Solution",
+      location: "Ahmedabad, Gujarat",
+      duration:
+        "10/2024 - Present (" +
+        calculateWorkDuration("2024-10-22", new Date().toISOString().split('T')[0]) +
+        ")",
+      description: [
+        "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
+        "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
+        "Led the implementation of data synchronization mechanisms for accurate migration of large datasets across PostgreSQL instances.",
+        "Implemented CI/CD pipelines with GitHub Actions",
+        "Automated testing and deployment processes",
+        "Applied Prisma ORM for streamlined database operations and schema migrations, boosting productivity and code maintainability.",
+        "Ensured application reliability and robustness through comprehensive unit and integration tests using Jest and React Testing Library.",
+      ],
+    }
+    , {
       title: "Backend Developer",
       company: "Dicot Innovation",
       location: "Ahmedabad, Gujarat",
       duration:
         "09/2023 - 10/2024 (" +
-        calculateWorkDuration("2023-09-1", "2024-10-07") +
+        calculateWorkDuration("2023-09-1", "2024-10-21") +
         ")",
       description: [
         "Leveraged Express.js to manage server-side logic and RESTful APIs",
@@ -246,7 +264,7 @@ const Portfolio = () => {
       ],
     },
     {
-      title: "Web Developer (Intern)",
+      title: "Web Developer",
       company: "Yudiz Solution",
       location: "Ahmedabad, Gujarat",
       duration:
