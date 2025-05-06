@@ -389,12 +389,8 @@ const Portfolio = () => {
             >
               <div className="max-w-4xl mx-auto">
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  Highly skilled Backend Developer with 1+ year of experience in
-                  building scalable applications using Node.js and Express.js.
-                  Proficient in integrating third-party APIs for seamless data
-                  flow, writing robust code with TypeScript, and optimizing data
-                  storage with MongoDB. Dedicated to delivering exceptional user
-                  experiences through innovative and efficient solutions.
+                  Full Stack Developer with 2.1+ years of experience delivering scalable web applications using React.js, Next.js, Node.js, and PostgreSQL.
+                  Skilled in REST API development, real-time systems, payment integration, and CI/CD automation
                 </p>
               </div>
             </motion.section>
