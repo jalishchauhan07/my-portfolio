@@ -4,6 +4,65 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// --- Constants & Helper Functions ---
+
+// Using a consistent current date (Nov 3, 2025) for accurate total experience calculation
+const CURRENT_DATE = new Date("2025-11-03");
+
+/**
+ * Calculates the duration between two dates in total months.
+ * Note: If the job is "Current", it calculates up to CURRENT_DATE.
+ * @param {string} startDateStr - YYYY-MM-DD
+ * @param {string} endDateStr - YYYY-MM-DD or 'Current'
+ * @returns {number} Total months of experience.
+ */
+const calculateMonthsDuration = (startDateStr, endDateStr) => {
+  const start = new Date(startDateStr);
+  const end = endDateStr === 'Current' ? CURRENT_DATE : new Date(endDateStr);
+
+  if (start > end) return 0;
+
+  let totalMonths = (end.getFullYear() - start.getFullYear()) * 12;
+  totalMonths += end.getMonth() - start.getMonth();
+
+  // Adjust if the end day is less than the start day (meaning a full month hasn't been completed)
+  if (end.getDate() < start.getDate() && totalMonths > 0) {
+    totalMonths -= 1;
+  }
+
+  return totalMonths;
+};
+
+/**
+ * Converts total months into a "Y years, M months" formatted string.
+ * @param {number} totalMonths - Total months of experience.
+ * @returns {string} Formatted duration string.
+ */
+const formatDurationString = (totalMonths) => {
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+
+  if (years === 0 && months === 0) return "Less than a month";
+  if (years === 0) return `${months} months`;
+  if (months === 0) return `${years} years`;
+  return `${years} years, ${months} months`;
+};
+
+/**
+ * Calculates the total experience from an array of experience objects.
+ * @param {Array<Object>} experiences - Array of experience objects with startDate and endDate.
+ * @returns {string} Formatted total experience string.
+ */
+const calculateTotalExperience = (experiences) => {
+  let totalMonths = 0;
+  experiences.forEach(exp => {
+    totalMonths += calculateMonthsDuration(exp.startDate, exp.endDate);
+  });
+  return formatDurationString(totalMonths);
+};
+
+// --- Framer Motion Variants ---
+
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -17,6 +76,8 @@ const staggerContainer = {
     },
   },
 };
+
+// --- Components ---
 
 const Navbar = ({ isOpen, setIsOpen }) => (
   <motion.nav
@@ -199,42 +260,65 @@ const SkillCategory = ({ title, skills }) => (
   </motion.div>
 );
 
+// --- Main Portfolio Component ---
+
 const Portfolio = () => {
   const mountRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  function calculateWorkDuration(startDate, endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
 
-    // Ensure startDate is not after endDate
-    if (start > end) {
-      return "Invalid dates. Start date cannot be after end date.";
+  // Three.js setup: Initializing an empty scene just to fulfill the requirements,
+  // though the visual setup is missing and the ref is unused.
+  useEffect(() => {
+    // Simple Three.js setup (No actual rendering without more context/logic)
+    if (mountRef.current) {
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+      // Set up renderer to fill container
+      const updateSize = () => {
+        const width = mountRef.current.clientWidth;
+        const height = mountRef.current.clientHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      };
+
+      updateSize();
+      window.addEventListener('resize', updateSize);
+
+      // Append renderer canvas to ref
+      if (mountRef.current.firstChild) {
+        mountRef.current.removeChild(mountRef.current.firstChild);
+      }
+      mountRef.current.appendChild(renderer.domElement);
+
+      // Basic animation loop placeholder
+      const animate = () => {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      // Cleanup
+      return () => {
+        window.removeEventListener('resize', updateSize);
+        if (mountRef.current && renderer.domElement) {
+          mountRef.current.removeChild(renderer.domElement);
+        }
+      };
     }
+  }, []);
 
-    // Calculate total months between the two dates
-    const totalMonths =
-      (end.getFullYear() - start.getFullYear()) * 12 +
-      (end.getMonth() - start.getMonth());
+  // --- Data Definition ---
 
-    if (totalMonths >= 12) {
-      const years = Math.floor(totalMonths / 12);
-      const remainingMonths = totalMonths % 12;
-      return remainingMonths > 0
-        ? `${years} years, ${remainingMonths} months`
-        : `${years} years`;
-    } else {
-      return `${totalMonths} months`;
-    }
-  }
   const experiences = [
     {
       title: "Software Developer",
       company: "Digilize Solution",
       location: "Ahmedabad, Gujarat",
-      duration:
-        "10/2024 - Present (" +
-        calculateWorkDuration("2024-10-22", new Date().toISOString().split('T')[0]) +
-        ")",
+      startDate: "2024-10-22",
+      endDate: "Current",
       description: [
         "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
         "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
@@ -244,15 +328,13 @@ const Portfolio = () => {
         "Applied Prisma ORM for streamlined database operations and schema migrations, boosting productivity and code maintainability.",
         "Ensured application reliability and robustness through comprehensive unit and integration tests using Jest and React Testing Library.",
       ],
-    }
-    , {
+    },
+    {
       title: "Backend Developer",
       company: "Dicot Innovation",
       location: "Ahmedabad, Gujarat",
-      duration:
-        "09/2023 - 10/2024 (" +
-        calculateWorkDuration("2023-09-1", "2024-10-21") +
-        ")",
+      startDate: "2023-09-01",
+      endDate: "2024-10-21",
       description: [
         "Leveraged Express.js to manage server-side logic and RESTful APIs",
         "Ensured smooth and reliable performance through optimized code",
@@ -267,10 +349,8 @@ const Portfolio = () => {
       title: "Web Developer",
       company: "Yudiz Solution",
       location: "Ahmedabad, Gujarat",
-      duration:
-        "02/2023 - 08/2023 (" +
-        calculateWorkDuration("2023-02-1", "2023-08-01") +
-        ")",
+      startDate: "2023-02-01",
+      endDate: "2023-08-01",
       description: [
         "Developed interactive web applications using Phaser.js and Three.js",
         "Created real-time communication channels for multiplayer games",
@@ -320,7 +400,7 @@ const Portfolio = () => {
   const skillCategories = [
     {
       title: "Backend Development",
-      skills: ["Node.js", "Express.js", "MongoDB", "MySQL"],
+      skills: ["Node.js", "Express.js", "PostgreSQL", "MongoDB", "MySQL", "Prisma ORM"],
     },
     {
       title: "Frontend Development",
@@ -337,34 +417,52 @@ const Portfolio = () => {
     },
     {
       title: "Tools & Technologies",
-      skills: ["Git"],
+      skills: ["Git", "GitHub Actions", "CI/CD", "Jest", "React Testing Library"],
     },
   ];
 
-  // Three.js setup remains the same...
-  // (Previous Three.js code here)
+  // --- Dynamic Calculations ---
+  const totalExperienceDuration = calculateTotalExperience(experiences);
+
+  // Map experiences to add formatted duration string for display
+  const formattedExperiences = experiences.map(exp => {
+    const durationMonths = calculateMonthsDuration(exp.startDate, exp.endDate);
+    const durationString = formatDurationString(durationMonths);
+
+    // Format date range (e.g., 10/2024 - Current) + (1 year, 0 months)
+    const displayEndDate = exp.endDate === 'Current' ? 'Current' : new Date(exp.endDate).toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
+    const displayStartDate = new Date(exp.startDate).toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
+
+    return {
+      ...exp,
+      duration: `${displayStartDate} - ${displayEndDate} (${durationString})`
+    };
+  });
+
+  // --- JSX Render ---
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white font-inter">
+      {/* Background 3D Placeholder (Fixed positioning for visual background) */}
       <div ref={mountRef} className="fixed inset-0 -z-10" />
 
       <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
       <MobileMenu isOpen={isMenuOpen} />
 
-      {/* Hero Section */}
+      {/* Hero Section (Home) */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
         id="home"
-        className="min-h-screen flex items-center justify-center px-4"
+        className="min-h-screen flex items-center justify-center px-4 pt-16"
       >
-        <div className="text-center">
+        <div className="text-center max-w-4xl mx-auto">
           <motion.h1
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold mb-6"
+            className="text-5xl md:text-7xl font-extrabold mb-6"
           >
             <span className="bg-gradient-to-r from-emerald-400 to-blue-500 text-transparent bg-clip-text">
               Jalish Chauhan
@@ -374,33 +472,30 @@ const Portfolio = () => {
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-300 mb-8"
+            className="text-xl md:text-3xl text-gray-300 mb-8 font-light"
           >
-            Full Stack Developer
+            Full Stack Developer | MERN Stack & Next.js
           </motion.p>
-          <motion.p>
-            {/* Summary Section */}
-            <motion.section
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              variants={fadeIn}
-              className="py-20 px-4"
-            >
-              <div className="max-w-4xl mx-auto">
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  Full Stack Developer with 2.1+ years of experience delivering scalable web applications using React.js, Next.js, Node.js, and PostgreSQL.
-                  Skilled in REST API development, real-time systems, payment integration, and CI/CD automation
-                </p>
-              </div>
-            </motion.section>
-          </motion.p>
+
+          {/* Summary Section - Dynamic Experience Here */}
+          <motion.section
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="py-10 px-4"
+          >
+            <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
+              Full Stack Developer with <span className="text-emerald-300 font-semibold">{totalExperienceDuration}</span> of experience delivering scalable web applications using React.js, Next.js, Node.js, and PostgreSQL.
+              Skilled in REST API development, real-time systems, payment integration, and CI/CD automation.
+            </p>
+          </motion.section>
 
           <motion.div
             variants={staggerContainer}
             initial="initial"
             animate="animate"
-            className="flex justify-center space-x-6"
+            className="flex justify-center space-x-6 mt-8"
           >
             {[
               { icon: Github, href: "https://github.com/jalishchauhan07" },
@@ -413,21 +508,24 @@ const Portfolio = () => {
               <motion.a
                 key={href}
                 href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 variants={fadeIn}
                 whileHover={{ scale: 1.2, color: "#34d399" }}
-                className="transition-colors"
+                className="transition-colors text-gray-400"
               >
-                <Icon size={24} />
+                <Icon size={28} />
               </motion.a>
             ))}
           </motion.div>
         </div>
       </motion.section>
 
+      {/* Experience Section */}
       <motion.section
         initial="initial"
         whileInView="animate"
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={{
           initial: {},
           animate: { transition: { staggerChildren: 0.2 } },
@@ -438,13 +536,14 @@ const Portfolio = () => {
         <div className="max-w-6xl mx-auto">
           <motion.h2
             variants={fadeIn}
-            className="text-4xl font-bold mb-12 text-center"
+            className="text-4xl font-bold mb-12 text-center text-emerald-400"
           >
             Experience
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {experiences.map((exp, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {formattedExperiences.map((exp, index) => (
               <ExperienceCard
+                key={index}
                 title={exp.title}
                 company={exp.company}
                 location={exp.location}
@@ -460,7 +559,7 @@ const Portfolio = () => {
       <motion.section
         initial="initial"
         whileInView="animate"
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={{
           initial: {},
           animate: { transition: { staggerChildren: 0.2 } },
@@ -471,22 +570,23 @@ const Portfolio = () => {
         <div className="max-w-6xl mx-auto">
           <motion.h2
             variants={fadeIn}
-            className="text-4xl font-bold mb-12 text-center"
+            className="text-4xl font-bold mb-12 text-center text-emerald-400"
           >
             Projects
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {projects.map((project, index) => (
               <ProjectCard key={index} {...project} />
             ))}
           </div>
         </div>
       </motion.section>
+
       {/* Skills Section */}
       <motion.section
         initial="initial"
         whileInView="animate"
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={{
           initial: {},
           animate: { transition: { staggerChildren: 0.2 } },
@@ -497,33 +597,41 @@ const Portfolio = () => {
         <div className="max-w-6xl mx-auto">
           <motion.h2
             variants={fadeIn}
-            className="text-4xl font-bold mb-12 text-center"
+            className="text-4xl font-bold mb-12 text-center text-emerald-400"
           >
             Skills
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {skillCategories.map((category, index) => (
               <SkillCategory key={index} {...category} />
             ))}
           </div>
         </div>
       </motion.section>
-      {/* (Previous sections with added motion components) */}
-      <section id="contact" className="py-20 px-4 bg-black/20">
+
+      {/* Contact Section */}
+      <motion.section
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+        variants={fadeIn}
+        id="contact"
+        className="py-20 px-4 bg-black/20"
+      >
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-8">Get In Touch</h2>
-          <p className="text-gray-300 mb-8">
+          <h2 className="text-4xl font-bold mb-8 text-emerald-400">Get In Touch</h2>
+          <p className="text-gray-300 mb-8 text-lg">
             I'm currently looking for new opportunities. Whether you have a
             question or just want to say hi, feel free to reach out!
           </p>
           <a
             href="mailto:chauhanjalish005@gmail.com"
-            className="inline-block bg-emerald-500 text-white px-8 py-3 rounded-full font-medium hover:bg-emerald-600 transition-colors"
+            className="inline-block bg-emerald-500 text-white px-8 py-3 rounded-full font-medium shadow-lg hover:bg-emerald-600 transition-colors transform hover:scale-105"
           >
             Say Hello
           </a>
         </div>
-      </section>
+      </motion.section>
 
       <motion.footer
         initial={{ opacity: 0 }}
@@ -531,7 +639,7 @@ const Portfolio = () => {
         viewport={{ once: true }}
         className="py-6 text-center text-gray-400"
       >
-        <p>© 2024 Jalish Chauhan. All rights reserved.</p>
+        <p>© 2024 Jalish Chauhan.</p>
       </motion.footer>
     </div>
   );
