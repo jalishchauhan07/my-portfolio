@@ -350,7 +350,7 @@ const Portfolio = () => {
       company: "Yudiz Solution",
       location: "Ahmedabad, Gujarat",
       startDate: "2023-02-01",
-      endDate: "2023-08-01",
+      endDate: "2023-08-30",
       description: [
         "Developed interactive web applications using Phaser.js and Three.js",
         "Created real-time communication channels for multiplayer games",
