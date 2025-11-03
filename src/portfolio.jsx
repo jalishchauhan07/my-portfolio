@@ -318,7 +318,7 @@ const Portfolio = () => {
       company: "Digilize Solution",
       location: "Ahmedabad, Gujarat",
       startDate: "2024-10-22",
-      endDate: "Current",
+      endDate: "2025-10-18",
       description: [
         "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
         "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
