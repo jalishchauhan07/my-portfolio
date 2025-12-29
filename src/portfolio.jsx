@@ -315,10 +315,26 @@ const Portfolio = () => {
   const experiences = [
     {
       title: "Software Developer",
+      company: "ABJ Experts",
+      location: "Ahmedabad, Gujarat",
+      startDate: "2025-12-08",
+      endDate:"Current",
+      description: [
+        "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
+        "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
+        "Led the implementation of data synchronization mechanisms for accurate migration of large datasets across PostgreSQL instances.",
+        "Implemented CI/CD pipelines with GitHub Actions",
+        "Automated testing and deployment processes",
+        "Applied Prisma ORM for streamlined database operations and schema migrations, boosting productivity and code maintainability.",
+        "Ensured application reliability and robustness through comprehensive unit and integration tests using Jest and React Testing Library.",
+      ],
+    },
+    {
+      title: "Software Developer",
       company: "Digilize Solution",
       location: "Ahmedabad, Gujarat",
       startDate: "2024-10-22",
-      endDate: "2025-10-22",
+      endDate: "2025-12-06",
       description: [
         "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
         "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
