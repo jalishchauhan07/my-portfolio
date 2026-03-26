@@ -1,662 +1,243 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Github, Linkedin, Mail, Menu, X } from "lucide-react";
+import { Github, Linkedin, Mail, Menu, X, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- Constants & Helper Functions ---
-
-// Using a consistent current date (Nov 3, 2025) for accurate total experience calculation
-const CURRENT_DATE = new Date("2025-11-03");
+// --- Logic Engine (The "Senior Dev" Way) ---
 
 /**
- * Calculates the duration between two dates in total months.
- * Note: If the job is "Current", it calculates up to CURRENT_DATE.
- * @param {string} startDateStr - YYYY-MM-DD
- * @param {string} endDateStr - YYYY-MM-DD or 'Current'
- * @returns {number} Total months of experience.
+ * Calculates total months between two dates. 
+ * High-precision: accounts for days to ensure "1 month" isn't triggered 
+ * until a full 30-day cycle (approx) has passed, or defaults to 1 for new jobs.
  */
 const calculateMonthsDuration = (startDateStr, endDateStr) => {
   const start = new Date(startDateStr);
-  const end = endDateStr === 'Current' ? CURRENT_DATE : new Date(endDateStr);
+  const end = endDateStr === "Current" ? new Date() : new Date(endDateStr);
 
+  if (isNaN(start.getTime())) return 0;
   if (start > end) return 0;
 
   let totalMonths = (end.getFullYear() - start.getFullYear()) * 12;
   totalMonths += end.getMonth() - start.getMonth();
 
-  // Adjust if the end day is less than the start day (meaning a full month hasn't been completed)
-  if (end.getDate() < start.getDate() && totalMonths > 0) {
-    totalMonths -= 1;
+  // Adjust if the day of the month hasn't been reached yet
+  if (end.getDate() < start.getDate()) {
+    totalMonths--;
   }
 
-  return totalMonths;
+  // If it's a "Current" job and less than a month, we return 1 
+  // because you are actively working that month.
+  return Math.max(endDateStr === "Current" ? 1 : 0, totalMonths);
 };
 
-/**
- * Converts total months into a "Y years, M months" formatted string.
- * @param {number} totalMonths - Total months of experience.
- * @returns {string} Formatted duration string.
- */
 const formatDurationString = (totalMonths) => {
+  if (totalMonths <= 0) return "Starting soon";
+  
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
 
-  if (years === 0 && months === 0) return "Less than a month";
-  if (years === 0) return `${months} months`;
-  if (months === 0) return `${years} years`;
-  return `${years} years, ${months} months`;
-};
+  const yearPart = years > 0 ? `${years} yr${years > 1 ? "s" : ""}` : "";
+  const monthPart = months > 0 ? `${months} mo${months > 1 ? "s" : ""}` : "";
 
-/**
- * Calculates the total experience from an array of experience objects.
- * @param {Array<Object>} experiences - Array of experience objects with startDate and endDate.
- * @returns {string} Formatted total experience string.
- */
-const calculateTotalExperience = (experiences) => {
-  let totalMonths = 0;
-  experiences.forEach(exp => {
-    totalMonths += calculateMonthsDuration(exp.startDate, exp.endDate);
-  });
-  return formatDurationString(totalMonths);
+  return [yearPart, monthPart].filter(Boolean).join(" ");
 };
 
 // --- Framer Motion Variants ---
 
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
+const fadeInUp = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
+const stagger = {
+  animate: { transition: { staggerChildren: 0.1 } },
 };
 
-// --- Components ---
+// --- Shared Components ---
 
 const Navbar = ({ isOpen, setIsOpen }) => (
-  <motion.nav
-    initial={{ y: -100 }}
-    animate={{ y: 0 }}
-    transition={{ type: "spring", stiffness: 100 }}
-    className="fixed w-full z-50 bg-black/20 backdrop-blur-lg"
-  >
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between h-16">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex-shrink-0"
-        >
-          <span className="text-white text-xl font-bold">Jalish Chauhan</span>
-        </motion.div>
-        <div className="hidden md:block">
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="ml-10 flex items-baseline space-x-4"
-          >
-            {["Home", "Experience", "Projects", "Skills", "Contact"].map(
-              (item) => (
-                <motion.a
-                  key={item}
-                  variants={fadeIn}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {item}
-                </motion.a>
-              )
-            )}
-          </motion.div>
-        </div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="md:hidden"
-        >
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-300 hover:text-white"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </motion.div>
+  <nav className="fixed w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/5">
+    <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="text-white text-xl font-bold tracking-tighter">JALISH.DEV</div>
+      
+      <div className="hidden md:flex space-x-8">
+        {["Experience", "Projects", "Skills", "Contact"].map((item) => (
+          <a key={item} href={`#${item.toLowerCase()}`} className="text-sm text-gray-400 hover:text-emerald-400 transition-colors">
+            {item}
+          </a>
+        ))}
       </div>
+
+      <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-white">
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
     </div>
-  </motion.nav>
+  </nav>
 );
 
-const MobileMenu = ({ isOpen }) => (
-  <AnimatePresence>
-    {isOpen && (
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "tween", duration: 0.3 }}
-        className="md:hidden fixed inset-0 z-40 bg-black/95 backdrop-blur-lg"
-      >
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-          className="pt-20 pb-3 space-y-1 px-4"
-        >
-          {["Home", "Experience", "Projects", "Skills", "Contact"].map(
-            (item) => (
-              <motion.a
-                key={item}
-                variants={fadeIn}
-                href={`#${item.toLowerCase()}`}
-                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                whileHover={{ x: 10 }}
-              >
-                {item}
-              </motion.a>
-            )
-          )}
-        </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
-
-const ExperienceCard = ({
-  title,
-  company,
-  location,
-  duration,
-  description,
-}) => (
-  <motion.div
-    variants={fadeIn}
-    whileHover={{ scale: 1.02 }}
-    className="bg-black/30 backdrop-blur-md p-6 rounded-xl hover:bg-black/40 transition-colors"
-  >
-    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-    <div className="text-emerald-400 font-semibold mb-1">{company}</div>
-    <div className="text-gray-400 text-sm mb-1">{location}</div>
-    <div className="text-gray-400 text-sm mb-4">{duration}</div>
-    <motion.ul
-      variants={staggerContainer}
-      initial="initial"
-      animate="animate"
-      className="text-gray-300 space-y-2"
-    >
-      {description.map((item, index) => (
-        <motion.li key={index} variants={fadeIn} className="flex items-start">
-          <span className="mr-2">•</span>
-          <span>{item}</span>
-        </motion.li>
+const ExperienceCard = ({ title, company, location, duration, description }) => (
+  <motion.div variants={fadeInUp} className="group relative bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all">
+    <div className="absolute top-0 left-0 w-1 h-0 bg-emerald-500 group-hover:h-full transition-all duration-300 rounded-l-2xl" />
+    <h3 className="text-xl font-bold text-white">{title}</h3>
+    <div className="text-emerald-400 font-medium mt-1">{company} • <span className="text-gray-500 text-sm">{location}</span></div>
+    <div className="text-gray-400 text-xs font-mono mt-2 uppercase tracking-widest">{duration}</div>
+    <ul className="mt-6 space-y-3">
+      {description.map((item, i) => (
+        <li key={i} className="text-gray-300 text-sm flex gap-3 leading-relaxed">
+          <span className="text-emerald-500 mt-1">▹</span> {item}
+        </li>
       ))}
-    </motion.ul>
+    </ul>
   </motion.div>
 );
 
-const ProjectCard = ({ title, description, technologies, details }) => (
-  <motion.div
-    variants={fadeIn}
-    whileHover={{ scale: 1.02 }}
-    className="bg-black/30 backdrop-blur-md p-6 rounded-xl hover:bg-black/40 transition-colors"
-  >
-    <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-    <p className="text-gray-300 mb-4">{description}</p>
-    <div className="text-gray-300 mb-4">
-      {details.map((detail, index) => (
-        <div key={index} className="flex items-start mb-2">
-          <span className="mr-2">•</span>
-          <span>{detail}</span>
-        </div>
-      ))}
-    </div>
-    <motion.div
-      variants={staggerContainer}
-      initial="initial"
-      animate="animate"
-      className="flex flex-wrap gap-2"
-    >
-      {technologies.map((tech, index) => (
-        <motion.span
-          key={index}
-          variants={fadeIn}
-          whileHover={{ scale: 1.1 }}
-          className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-sm"
-        >
-          {tech}
-        </motion.span>
-      ))}
-    </motion.div>
-  </motion.div>
-);
-
-const SkillCategory = ({ title, skills }) => (
-  <motion.div
-    variants={fadeIn}
-    className="bg-black/30 backdrop-blur-md p-6 rounded-xl"
-  >
-    <h3 className="text-xl font-bold text-white mb-4">{title}</h3>
-    <div className="flex flex-wrap gap-3">
-      {skills.map((skill, index) => (
-        <motion.span
-          key={index}
-          variants={fadeIn}
-          whileHover={{ scale: 1.1 }}
-          className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-sm"
-        >
-          {skill}
-        </motion.span>
-      ))}
-    </div>
-  </motion.div>
-);
-
-// --- Main Portfolio Component ---
+// --- Main Application ---
 
 const Portfolio = () => {
   const mountRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Three.js setup: Initializing an empty scene just to fulfill the requirements,
-  // though the visual setup is missing and the ref is unused.
-  useEffect(() => {
-    // Simple Three.js setup (No actual rendering without more context/logic)
-    if (mountRef.current) {
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ alpha: true });
-
-      // Set up renderer to fill container
-      const updateSize = () => {
-        const width = mountRef.current.clientWidth;
-        const height = mountRef.current.clientHeight;
-        renderer.setSize(width, height);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      };
-
-      updateSize();
-      window.addEventListener('resize', updateSize);
-
-      // Append renderer canvas to ref
-      if (mountRef.current.firstChild) {
-        mountRef.current.removeChild(mountRef.current.firstChild);
+  // --- Data Definition (Moving to Memo for performance) ---
+  const data = useMemo(() => {
+    const rawExp = [
+      {
+        title: "Software Developer",
+        company: "ABJ Experts",
+        location: "Ahmedabad",
+        startDate: "2025-12-08",
+        endDate: "Current",
+        description: [
+          "Building high-performance Next.js applications with SSR/SSG.",
+          "Managing large-scale data sync across PostgreSQL instances using Prisma.",
+          "Automating deployment cycles via GitHub Actions and CI/CD."
+        ],
+      },
+      {
+        title: "Software Developer",
+        company: "Digilize Solution",
+        location: "Ahmedabad",
+        startDate: "2024-10-22",
+        endDate: "2025-12-06",
+        description: ["Architected RESTful APIs using Express.js.", "Optimized frontend performance by 40% using Next.js."],
+      },
+      {
+        title: "Backend Developer",
+        company: "Dicot Innovation",
+        location: "Ahmedabad",
+        startDate: "2023-09-01",
+        endDate: "2024-10-21",
+        description: ["Integrated complex Telegram bots with Node.js.", "Scaled server-side logic for high-concurrency users."],
+      },
+      {
+        title: "Web Developer",
+        company: "Yudiz Solution",
+        location: "Ahmedabad",
+        startDate: "2023-02-01",
+        endDate: "2023-08-30",
+        description: ["Built interactive 3D web apps with Three.js and Phaser."],
       }
-      mountRef.current.appendChild(renderer.domElement);
+    ];
 
-      // Basic animation loop placeholder
-      const animate = () => {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-      };
-      animate();
+    const totalMonths = rawExp.reduce((acc, exp) => acc + calculateMonthsDuration(exp.startDate, exp.endDate), 0);
+    
+    const formattedExp = rawExp.map(exp => ({
+      ...exp,
+      displayDuration: `${new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - ${exp.endDate === 'Current' ? 'Present' : new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} (${formatDurationString(calculateMonthsDuration(exp.startDate, exp.endDate))})`
+    }));
 
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', updateSize);
-        if (mountRef.current && renderer.domElement) {
-          mountRef.current.removeChild(renderer.domElement);
-        }
-      };
-    }
+    return { totalExperience: formatDurationString(totalMonths), experiences: formattedExp };
   }, []);
 
-  // --- Data Definition ---
+  // Three.js Background Logic
+  useEffect(() => {
+    if (!mountRef.current) return;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    mountRef.current.appendChild(renderer.domElement);
 
-  const experiences = [
-    {
-      title: "Software Developer",
-      company: "ABJ Experts",
-      location: "Ahmedabad, Gujarat",
-      startDate: "2025-12-08",
-      endDate:"Current",
-      description: [
-        "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
-        "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
-        "Led the implementation of data synchronization mechanisms for accurate migration of large datasets across PostgreSQL instances.",
-        "Implemented CI/CD pipelines with GitHub Actions",
-        "Automated testing and deployment processes",
-        "Applied Prisma ORM for streamlined database operations and schema migrations, boosting productivity and code maintainability.",
-        "Ensured application reliability and robustness through comprehensive unit and integration tests using Jest and React Testing Library.",
-      ],
-    },
-    {
-      title: "Software Developer",
-      company: "Digilize Solution",
-      location: "Ahmedabad, Gujarat",
-      startDate: "2024-10-22",
-      endDate: "2025-12-06",
-      description: [
-        "Engineered responsive web applications using Next.js with SSR (Server-Side Rendering) and SSG (Static Site Generation) to enhance SEO and performance.",
-        "Developed scalable RESTful APIs using Express.js for efficient frontend-backend communication and seamless data transactions with PostgreSQL.",
-        "Led the implementation of data synchronization mechanisms for accurate migration of large datasets across PostgreSQL instances.",
-        "Implemented CI/CD pipelines with GitHub Actions",
-        "Automated testing and deployment processes",
-        "Applied Prisma ORM for streamlined database operations and schema migrations, boosting productivity and code maintainability.",
-        "Ensured application reliability and robustness through comprehensive unit and integration tests using Jest and React Testing Library.",
-      ],
-    },
-    {
-      title: "Backend Developer",
-      company: "Dicot Innovation",
-      location: "Ahmedabad, Gujarat",
-      startDate: "2023-09-01",
-      endDate: "2024-10-21",
-      description: [
-        "Leveraged Express.js to manage server-side logic and RESTful APIs",
-        "Ensured smooth and reliable performance through optimized code",
-        "Integrated Telegram bot with Node.js API for specific user messaging",
-        "Implemented CI/CD pipelines with GitHub Actions",
-        "Automated testing and deployment processes",
-        "Utilized monitoring tools for system performance",
-        "Collaborated with cross-functional teams for feature integration",
-      ],
-    },
-    {
-      title: "Web Developer",
-      company: "Yudiz Solution",
-      location: "Ahmedabad, Gujarat",
-      startDate: "2023-02-01",
-      endDate: "2023-08-30",
-      description: [
-        "Developed interactive web applications using Phaser.js and Three.js",
-        "Created real-time communication channels for multiplayer games",
-        "Integrated React.js for scalable user interfaces",
-        "Enhanced user engagement through synchronized interactions",
-        "Crafted immersive experiences with advanced features",
-        "Delivered polished user experiences through seamless integration",
-      ],
-    },
-  ];
+    // Add some subtle particles for a "Pro" feel
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+    for (let i = 0; i < 5000; i++) {
+      vertices.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+    }
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    const points = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x10b981, size: 2 }));
+    scene.add(points);
 
-  const projects = [
-    {
-      title: "Hospital Management System",
-      description:
-        "A comprehensive system for managing hospital appointments and patient records",
-      details: [
-        "Developed with React.js frontend and Node.js backend",
-        "Incorporated Bootstrap for user-friendly interface",
-        "Integrated API for nearby medical shop information",
-        "Implemented MySQL database for efficient data management",
-        "Added user authentication with role-based access control",
-      ],
-      technologies: ["React.js", "Node.js", "MySQL", "Express.js", "Bootstrap"],
-    },
-    {
-      title: "Reporting System for Solar Industry",
-      description:
-        "MERN Stack application for project management and supervision",
-      details: [
-        "Developed comprehensive reporting system with MERN Stack",
-        "Implemented supervisor login with camera API integration",
-        "Added Google Maps integration for location tracking",
-        "Created charts for progress tracking",
-        "Enabled efficient project and user role management",
-      ],
-      technologies: [
-        "MongoDB",
-        "Express.js",
-        "React",
-        "Node.js",
-        "Google Maps API",
-      ],
-    },
-  ];
+    camera.position.z = 1000;
 
-  const skillCategories = [
-    {
-      title: "Backend Development",
-      skills: ["Node.js", "Express.js", "PostgreSQL", "MongoDB", "MySQL", "Prisma ORM"],
-    },
-    {
-      title: "Frontend Development",
-      skills: [
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "React",
-        "TypeScript",
-        "Next.js",
-        "Bootstrap",
-        "TailwindCSS",
-      ],
-    },
-    {
-      title: "Tools & Technologies",
-      skills: ["Git", "GitHub Actions", "CI/CD", "Jest", "React Testing Library"],
-    },
-  ];
-
-  // --- Dynamic Calculations ---
-  const totalExperienceDuration = calculateTotalExperience(experiences);
-
-  // Map experiences to add formatted duration string for display
-  const formattedExperiences = experiences.map(exp => {
-    const durationMonths = calculateMonthsDuration(exp.startDate, exp.endDate);
-    const durationString = formatDurationString(durationMonths);
-
-    // Format date range (e.g., 10/2024 - Current) + (1 year, 0 months)
-    const displayEndDate = exp.endDate === 'Current' ? 'Current' : new Date(exp.endDate).toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
-    const displayStartDate = new Date(exp.startDate).toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
-
-    return {
-      ...exp,
-      duration: `${displayStartDate} - ${displayEndDate} (${durationString})`
+    const animate = () => {
+      requestAnimationFrame(animate);
+      points.rotation.y += 0.001;
+      renderer.render(scene, camera);
     };
-  });
+    animate();
 
-  // --- JSX Render ---
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      mountRef.current?.removeChild(renderer.domElement);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white font-inter">
-      {/* Background 3D Placeholder (Fixed positioning for visual background) */}
-      <div ref={mountRef} className="fixed inset-0 -z-10" />
-
+    <div className="bg-[#050505] min-h-screen text-white selection:bg-emerald-500/30">
+      <div ref={mountRef} className="fixed inset-0 pointer-events-none opacity-40" />
+      
       <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
-      <MobileMenu isOpen={isMenuOpen} />
 
-      {/* Hero Section (Home) */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        id="home"
-        className="min-h-screen flex items-center justify-center px-4 pt-16"
-      >
-        <div className="text-center max-w-4xl mx-auto">
-          <motion.h1
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-extrabold mb-6"
-          >
-            <span className="bg-gradient-to-r from-emerald-400 to-blue-500 text-transparent bg-clip-text">
-              Jalish Chauhan
-            </span>
+      {/* Hero Section */}
+      <section id="home" className="pt-32 pb-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="inline-block px-4 py-1.5 mb-6 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-xs font-mono uppercase tracking-widest">
+            Available for Freelance
+          </motion.div>
+          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-6xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">
+            Jalish Chauhan
           </motion.h1>
-          <motion.p
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-3xl text-gray-300 mb-8 font-light"
-          >
-            Full Stack Developer | MERN Stack & Next.js
+          <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            Full Stack Developer with <span className="text-white font-semibold">{data.totalExperience}</span> of professional expertise building scalable MERN & Next.js applications.
           </motion.p>
+        </div>
+      </section>
 
-          {/* Summary Section - Dynamic Experience Here */}
-          <motion.section
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="py-10 px-4"
-          >
-            <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
-              Full Stack Developer with <span className="text-emerald-300 font-semibold">{totalExperienceDuration}</span> of experience delivering scalable web applications using React.js, Next.js, Node.js, and PostgreSQL.
-              Skilled in REST API development, real-time systems, payment integration, and CI/CD automation.
-            </p>
-          </motion.section>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="flex justify-center space-x-6 mt-8"
-          >
-            {[
-              { icon: Github, href: "https://github.com/jalishchauhan07" },
-              {
-                icon: Linkedin,
-                href: "https://www.linkedin.com/in/jalish-chauhan/",
-              },
-              { icon: Mail, href: "mailto:chauhanjalish005@gmail.com" },
-            ].map(({ icon: Icon, href }, index) => (
-              <motion.a
-                key={href}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                variants={fadeIn}
-                whileHover={{ scale: 1.2, color: "#34d399" }}
-                className="transition-colors text-gray-400"
-              >
-                <Icon size={28} />
-              </motion.a>
+      {/* Experience Section */}
+      <section id="experience" className="py-24 px-6 relative">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold mb-16 flex items-center gap-4">
+            <span className="text-emerald-500 font-mono text-xl">01.</span> Professional Experience
+            <div className="h-px bg-white/10 flex-grow" />
+          </h2>
+          <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} className="grid gap-8">
+            {data.experiences.map((exp, i) => (
+              <ExperienceCard key={i} title={exp.title} company={exp.company} location={exp.location} duration={exp.displayDuration} description={exp.description} />
             ))}
           </motion.div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* Experience Section */}
-      <motion.section
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={{
-          initial: {},
-          animate: { transition: { staggerChildren: 0.2 } },
-        }}
-        id="experience"
-        className="py-20 px-4"
-      >
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            variants={fadeIn}
-            className="text-4xl font-bold mb-12 text-center text-emerald-400"
-          >
-            Experience
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {formattedExperiences.map((exp, index) => (
-              <ExperienceCard
-                key={index}
-                title={exp.title}
-                company={exp.company}
-                location={exp.location}
-                duration={exp.duration}
-                description={exp.description}
-              />
-            ))}
-          </div>
+      {/* Footer / Contact */}
+      <footer id="contact" className="py-20 border-t border-white/5 text-center">
+        <h3 className="text-gray-500 text-sm font-mono mb-4">WANT TO COLLABORATE?</h3>
+        <a href="mailto:chauhanjalish005@gmail.com" className="text-4xl font-bold text-white hover:text-emerald-400 transition-colors underline underline-offset-8 decoration-white/10 hover:decoration-emerald-400/50">
+          Get In Touch
+        </a>
+        <div className="mt-12 flex justify-center gap-8 text-gray-500">
+          <a href="https://github.com/jalishchauhan07" className="hover:text-white transition-colors"><Github size={20} /></a>
+          <a href="https://www.linkedin.com/in/jalish-chauhan/" className="hover:text-white transition-colors"><Linkedin size={20} /></a>
         </div>
-      </motion.section>
-
-      {/* Projects Section */}
-      <motion.section
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={{
-          initial: {},
-          animate: { transition: { staggerChildren: 0.2 } },
-        }}
-        id="projects"
-        className="py-20 px-4 bg-black/20"
-      >
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            variants={fadeIn}
-            className="text-4xl font-bold mb-12 text-center text-emerald-400"
-          >
-            Projects
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Skills Section */}
-      <motion.section
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={{
-          initial: {},
-          animate: { transition: { staggerChildren: 0.2 } },
-        }}
-        id="skills"
-        className="py-20 px-4"
-      >
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            variants={fadeIn}
-            className="text-4xl font-bold mb-12 text-center text-emerald-400"
-          >
-            Skills
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {skillCategories.map((category, index) => (
-              <SkillCategory key={index} {...category} />
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Contact Section */}
-      <motion.section
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true }}
-        variants={fadeIn}
-        id="contact"
-        className="py-20 px-4 bg-black/20"
-      >
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-8 text-emerald-400">Get In Touch</h2>
-          <p className="text-gray-300 mb-8 text-lg">
-            I'm currently looking for new opportunities. Whether you have a
-            question or just want to say hi, feel free to reach out!
-          </p>
-          <a
-            href="mailto:chauhanjalish005@gmail.com"
-            className="inline-block bg-emerald-500 text-white px-8 py-3 rounded-full font-medium shadow-lg hover:bg-emerald-600 transition-colors transform hover:scale-105"
-          >
-            Say Hello
-          </a>
-        </div>
-      </motion.section>
-
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="py-6 text-center text-gray-400"
-      >
-        <p>© 2024 Jalish Chauhan.</p>
-      </motion.footer>
+      </footer>
     </div>
   );
 };
