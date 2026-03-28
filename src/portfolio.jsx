@@ -1,7 +1,17 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import * as THREE from "three";
-import { Github, Linkedin, Menu, X, ExternalLink, Code2, Database, Layout, ChevronRight, Terminal } from "lucide-react";
+import { Github, Linkedin, Menu, X, ExternalLink, Code2, ChevronRight, Layout, Terminal, Database, } from "lucide-react";
 import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { experience, projects, } from "./data/data.js";
+
+
+const rawExp = experience
+
+const skills = [
+  { category: "Frontend", icon: <Layout className="text-emerald-400" />, items: ["React.js", "Next.js", "TypeScript", "Tailwind CSS", "Three.js", "Framer Motion"] },
+  { category: "Backend", icon: <Terminal className="text-emerald-400" />, items: ["Node.js", "Express", "RESTful APIs", "WebSockets", "GraphQL"] },
+  { category: "Database & Cloud", icon: <Database className="text-emerald-400" />, items: ["PostgreSQL", "MongoDB", "Prisma ORM", "Docker", "AWS", "CI/CD"] },
+];
 
 // --- Logic Engine ---
 
@@ -26,69 +36,6 @@ const formatDurationString = (totalMonths) => {
   return [yearPart, monthPart].filter(Boolean).join(" ");
 };
 
-// --- UX Enhancement Components ---
-
-const CustomCursor = () => {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const springConfig = { damping: 25, stiffness: 700 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-
-  useEffect(() => {
-    const moveCursor = (e) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-    };
-
-    const handleMouseOver = (e) => {
-      if (e.target.closest('a, button, .interactive-card')) {
-        setIsHovered(true);
-      } else {
-        setIsHovered(false);
-      }
-    };
-
-    window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
-
-    return () => {
-      window.removeEventListener("mousemove", moveCursor);
-      window.removeEventListener("mouseover", handleMouseOver);
-    };
-  }, [cursorX, cursorY]);
-
-  return (
-    <>
-      {/* Outer Circle */}
-      <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border border-emerald-500 rounded-full pointer-events-none z-[9999] shadow-[0_0_10px_rgba(16,185,129,0.2)]"
-        style={{
-          translateX: cursorXSpring,
-          translateY: cursorYSpring,
-          x: "-50%",
-          y: "-50%",
-          scale: isHovered ? 2.2 : 1,
-          backgroundColor: isHovered ? "rgba(16, 185, 129, 0.1)" : "transparent",
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      />
-      {/* Inner Dot */}
-      <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-emerald-500 rounded-full pointer-events-none z-[9999]"
-        style={{
-          translateX: cursorXSpring,
-          translateY: cursorYSpring,
-          x: "-50%",
-          y: "-50%",
-        }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      />
-    </>
-  );
-};
 
 const MagneticButton = ({ children, className }) => {
   const ref = useRef(null);
@@ -180,7 +127,7 @@ const stagger = {
 const Navbar = ({ isOpen, setIsOpen, activeSection }) => (
   <nav className="fixed w-full md:w-auto md:top-8 md:left-1/2 md:-translate-x-1/2 z-50 transition-all duration-300">
     <div className="md:hidden flex items-center justify-between px-6 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
-      <div className="text-white text-xl font-bold tracking-tighter">JALISH.DEV</div>
+      <div className="text-white text-xl font-bold tracking-tighter">JALISH CHAUHAN</div>
       <button onClick={() => setIsOpen(!isOpen)} className="text-white p-2">
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -191,8 +138,8 @@ const Navbar = ({ isOpen, setIsOpen, activeSection }) => (
       ${isOpen ? "flex" : "hidden"} flex-col md:flex-row absolute md:relative top-full left-0 w-full md:w-auto bg-[#050505]/95 md:bg-transparent border-b border-white/5 md:border-none py-8 md:py-2
     `}>
       {["Home", "Experience", "Projects", "Skills", "Contact"].map((item) => (
-        <a 
-          key={item} 
+        <a
+          key={item}
           href={`#${item.toLowerCase()}`}
           onClick={() => setIsOpen(false)}
           className={`
@@ -201,8 +148,8 @@ const Navbar = ({ isOpen, setIsOpen, activeSection }) => (
           `}
         >
           {activeSection === item.toLowerCase() && (
-            <motion.div 
-              layoutId="nav-pill" 
+            <motion.div
+              layoutId="nav-pill"
               className="absolute inset-0 bg-white/10 rounded-full md:block hidden"
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             />
@@ -239,7 +186,7 @@ const Portfolio = () => {
     minutes: 0,
     seconds: 0
   });
-  
+
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -248,79 +195,6 @@ const Portfolio = () => {
 
   // --- Data Definition ---
   const data = useMemo(() => {
-    const rawExp = [
-      {
-        title: "Software Developer",
-        company: "ABJ Experts",
-        location: "Ahmedabad",
-        startDate: "2025-12-08",
-        endDate: "Current",
-        description: [
-          "Building high-performance Next.js applications with SSR/SSG.",
-          "Managing large-scale data sync across PostgreSQL instances using Prisma.",
-          "Automating deployment cycles via GitHub Actions and CI/CD."
-        ],
-      },
-      {
-        title: "Software Developer",
-        company: "Digilize Solution",
-        location: "Ahmedabad",
-        startDate: "2024-10-22",
-        endDate: "2025-12-06",
-        description: [
-          "Architected RESTful APIs using Express.js.",
-          "Optimized frontend performance by 40% using Next.js."
-        ],
-      },
-      {
-        title: "Backend Developer",
-        company: "Dicot Innovation",
-        location: "Ahmedabad",
-        startDate: "2023-09-01",
-        endDate: "2024-10-21",
-        description: [
-          "Integrated complex Telegram bots with Node.js.",
-          "Scaled server-side logic for high-concurrency users."
-        ],
-      },
-      {
-        title: "Web Developer",
-        company: "Yudiz Solution",
-        location: "Ahmedabad",
-        startDate: "2023-02-01",
-        endDate: "2023-08-30",
-        description: [
-          "Built interactive 3D web apps with Three.js and Phaser."
-        ],
-      }
-    ];
-
-    const projects = [
-      {
-        title: "Enterprise E-Commerce Platform",
-        description: "A highly scalable e-commerce solution with real-time inventory tracking, Stripe integration, and an advanced admin dashboard.",
-        tech: ["Next.js", "PostgreSQL", "Prisma", "Stripe"],
-        link: "#",
-      },
-      {
-        title: "SaaS Analytics Dashboard",
-        description: "A fast rendering analytics tool with interactive charts processing millions of data points via WebSockets.",
-        tech: ["React", "Express", "MongoDB", "Socket.io"],
-        link: "#",
-      },
-      {
-        title: "Interactive 3D Product Configurator",
-        description: "Web-based 3D configurator allowing users to customize product features in real-time.",
-        tech: ["Three.js", "React Three Fiber", "Tailwind"],
-        link: "#",
-      }
-    ];
-
-    const skills = [
-      { category: "Frontend", icon: <Layout className="text-emerald-400" />, items: ["React.js", "Next.js", "TypeScript", "Tailwind CSS", "Three.js", "Framer Motion"] },
-      { category: "Backend", icon: <Terminal className="text-emerald-400" />, items: ["Node.js", "Express", "RESTful APIs", "WebSockets", "GraphQL"] },
-      { category: "Database & Cloud", icon: <Database className="text-emerald-400" />, items: ["PostgreSQL", "MongoDB", "Prisma ORM", "Docker", "AWS", "CI/CD"] },
-    ];
 
     const totalMonths = rawExp.reduce((acc, exp) => acc + calculateMonthsDuration(exp.startDate, exp.endDate), 0);
     const formattedExp = rawExp.map(exp => ({
@@ -380,7 +254,7 @@ const Portfolio = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-    
+
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);
@@ -389,28 +263,28 @@ const Portfolio = () => {
     const vertices = [];
     for (let i = 0; i < 3000; i++) {
       vertices.push(
-        THREE.MathUtils.randFloatSpread(2000), 
-        THREE.MathUtils.randFloatSpread(2000), 
+        THREE.MathUtils.randFloatSpread(2000),
+        THREE.MathUtils.randFloatSpread(2000),
         THREE.MathUtils.randFloatSpread(1000) - 500
       );
     }
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    
+
     const canvas = document.createElement('canvas');
     canvas.width = 16; canvas.height = 16;
     const context = canvas.getContext('2d');
     const gradient = context.createRadialGradient(8, 8, 0, 8, 8, 8);
-    gradient.addColorStop(0, 'rgba(16, 185, 129, 1)'); 
+    gradient.addColorStop(0, 'rgba(16, 185, 129, 1)');
     gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
     context.fillStyle = gradient;
     context.fillRect(0, 0, 16, 16);
     const texture = new THREE.CanvasTexture(canvas);
 
-    const material = new THREE.PointsMaterial({ 
+    const material = new THREE.PointsMaterial({
       size: 6, map: texture, transparent: true, opacity: 0.6,
-      depthWrite: false, blending: THREE.AdditiveBlending 
+      depthWrite: false, blending: THREE.AdditiveBlending
     });
-    
+
     const points = new THREE.Points(geometry, material);
     scene.add(points);
     camera.position.z = 800;
@@ -464,9 +338,8 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <div className="bg-[#050505] min-h-screen text-white selection:bg-emerald-500/30 font-sans overflow-x-hidden cursor-none">
-      <CustomCursor />
-      
+    <div className="bg-[#050505] min-h-screen text-white selection:bg-emerald-500/30 font-sans overflow-x-hidden">
+
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-emerald-500 origin-left z-[100]"
         style={{ scaleX }}
@@ -478,11 +351,11 @@ const Portfolio = () => {
       </div>
 
       <div ref={mountRef} className="fixed inset-0 pointer-events-none opacity-50 z-0" />
-      
+
       <Navbar isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} activeSection={activeSection} />
 
       <main className="relative z-10 flex flex-col items-center">
-        
+
         <section id="home" className="min-h-screen w-full flex flex-col justify-center px-6 pt-20">
           <div className="max-w-5xl mx-auto w-full">
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-xs font-mono tracking-widest uppercase shadow-[0_0_15px_rgba(16,185,129,0.1)]">
@@ -492,16 +365,16 @@ const Portfolio = () => {
               </span>
               Available for Work
             </motion.div>
-            
+
             <motion.h1 initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1, duration: 0.8, ease: "easeOut" }} className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-6 bg-gradient-to-br from-white via-white to-white/40 bg-clip-text text-transparent">
-              Jalish<br/>Chauhan.
+              Jalish<br />Chauhan.
             </motion.h1>
-            
+
             <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }} className="flex flex-col gap-6">
               <p className="text-lg md:text-2xl text-gray-400 max-w-2xl leading-relaxed font-light">
                 Crafting scalable digital experiences. Full Stack Developer based in Ahmedabad, building advanced MERN & Next.js architectures.
               </p>
-              
+
               <div className="flex flex-wrap gap-4 mt-2">
                 {[
                   { label: "Yrs", value: liveExperience.years },
@@ -518,7 +391,7 @@ const Portfolio = () => {
                 ))}
               </div>
             </motion.div>
-            
+
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-12 flex items-center gap-6">
               <MagneticButton>
                 <a href="#experience" className="group flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-semibold transition-all hover:bg-gray-200 hover:scale-105 active:scale-95">
@@ -548,22 +421,22 @@ const Portfolio = () => {
               {data.experiences.map((exp, i) => (
                 <motion.div key={i} variants={fadeInUp} className="relative group">
                   <div className="absolute -left-[41px] md:-left-[57px] top-1.5 w-4 h-4 rounded-full bg-[#050505] border-2 border-emerald-500 group-hover:scale-125 group-hover:bg-emerald-500 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-all duration-300" />
-                  
+
                   <TiltCard>
                     <div className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl group-hover:bg-white/[0.04] group-hover:border-white/10 transition-colors backdrop-blur-sm relative overflow-hidden h-full">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[50px] group-hover:bg-emerald-400/20 transition-colors pointer-events-none" />
-                      
+
                       <h3 className="text-2xl font-bold text-white tracking-tight">{exp.title}</h3>
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-2 mb-6 text-emerald-400 font-medium">
                         <span>{exp.company}</span>
                         <span className="text-gray-600">•</span>
                         <span className="text-gray-400">{exp.location}</span>
                       </div>
-                      
+
                       <div className="inline-block px-3 py-1 bg-white/5 rounded-md text-gray-400 text-xs font-mono uppercase tracking-widest mb-6">
                         {exp.displayDuration}
                       </div>
-                      
+
                       <ul className="space-y-4">
                         {exp.description.map((item, j) => (
                           <li key={j} className="text-gray-300 text-sm md:text-base flex gap-4 leading-relaxed font-light">
@@ -589,19 +462,19 @@ const Portfolio = () => {
                   <TiltCard className="h-full">
                     <div className="group relative block bg-white/[0.02] border border-white/5 rounded-3xl p-8 hover:bg-white/[0.04] transition-all overflow-hidden h-full">
                       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-emerald-500/0 group-hover:to-emerald-500/5 transition-colors pointer-events-none" />
-                      
+
                       <div className="flex justify-between items-start mb-6">
                         <Code2 size={32} className="text-emerald-500/70" />
-                        <a href={project.link} className="p-2 text-gray-400 hover:text-white transition-colors">
+                        <a href={project.link} target="_blank" rel="noreferrer" className="p-2 text-gray-400 hover:text-white transition-colors">
                           <ExternalLink size={20} />
                         </a>
                       </div>
-                      
+
                       <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">{project.title}</h3>
                       <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light line-clamp-3">
                         {project.description}
                       </p>
-                      
+
                       <div className="flex flex-wrap gap-2 mt-auto">
                         {project.tech.map((t, j) => (
                           <span key={j} className="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-gray-300 pointer-events-none">
@@ -643,7 +516,7 @@ const Portfolio = () => {
 
         <section id="contact" className="w-full py-40 px-6 text-center relative overflow-hidden">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-[400px] bg-emerald-500/10 blur-[150px] opacity-70 pointer-events-none rounded-t-full mix-blend-screen" />
-          
+
           <div className="max-w-2xl mx-auto relative z-10">
             <span className="text-emerald-500 font-mono text-sm tracking-widest uppercase mb-4 block">04. What's Next?</span>
             <h2 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tighter">Get In Touch</h2>
@@ -657,7 +530,7 @@ const Portfolio = () => {
             </MagneticButton>
           </div>
         </section>
-        
+
         <footer className="w-full pb-10 text-center relative z-10 text-gray-500 text-sm font-mono flex flex-col items-center gap-4">
           <div className="flex gap-6 mb-2 text-gray-400">
             <MagneticButton>

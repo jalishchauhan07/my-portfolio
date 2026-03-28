@@ -4,8 +4,12 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
-    clearScreen: false
+    port: 3001,
+    clearScreen: false,
+    fs: {
+      // Deny access to the 'data' folder
+      deny: ['/data/'],
+    },
   },
   build: {
     outDir: 'dist',
