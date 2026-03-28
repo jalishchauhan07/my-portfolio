@@ -8,6 +8,6 @@ export default defineConfig({
     clearScreen: false
   },
   build: {
-    outDir: 'build', // Matches CRA's output folder for Vercel compatibility
+    outDir: 'dist',
   }
 });
