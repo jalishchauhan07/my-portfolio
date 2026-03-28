@@ -492,7 +492,7 @@ const Portfolio = () => {
 
         <section id="skills" className="w-full py-32 px-6">
           <div className="max-w-5xl mx-auto w-full">
-            <SectionHeading number="03" title="Technical Arsenal" />
+            <SectionHeading number="03" title="Technical Skills" />
             <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} className="grid md:grid-cols-3 gap-6">
               {data.skills.map((skillGroup, i) => (
                 <motion.div key={i} variants={fadeInUp} className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 transition-colors">
