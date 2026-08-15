@@ -72,7 +72,7 @@ export const Contact = () => {
         </p>
         
         <MagneticButton className="inline-block">
-          <a href="mailto:chauhanjalish005@gmail.com" className="inline-block px-12 py-5 bg-white text-black font-medium rounded-full text-lg hover:scale-105 transition-transform">
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=chauhanjalish005@gmail.com&su=Let's%20Work%20Together" target="_blank" rel="noreferrer" className="inline-block px-12 py-5 bg-white text-black font-medium rounded-full text-lg hover:scale-105 transition-transform">
             Say Hello
           </a>
         </MagneticButton>
