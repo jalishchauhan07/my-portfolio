@@ -1,10 +1,12 @@
 import Portfolio from "./portfolio";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   return (
-    <div>
+    <>
       <Portfolio />
-    </div>
+      <Analytics />
+    </>
   );
 }
 
