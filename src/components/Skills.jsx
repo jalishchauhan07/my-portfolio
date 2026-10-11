@@ -34,6 +34,7 @@ import {
   SiLangchain,
   SiFlutter,
   SiDart,
+  SiTelegram,
 } from 'react-icons/si';
 import { FaAws } from 'react-icons/fa6';
 import { TbBrandOpenai } from 'react-icons/tb';
@@ -258,6 +259,15 @@ const skillsData = [
     color: '#9C27B0',
     Icon: SiMqtt,
     description: 'Sub-100ms industrial telemetry streams, sensor data ingestion, and factory SCADA pipelines.'
+  },
+  {
+    name: 'Telegram Bot API',
+    category: 'Real-Time & IIoT',
+    type: 'Automated Alerts',
+    level: 'Advanced',
+    color: '#26A5E4',
+    Icon: SiTelegram,
+    description: 'Instant threshold incident dispatch, automated factory alert bots, and real-time operational notifications.'
   }
 ];
 

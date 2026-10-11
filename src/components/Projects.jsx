@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -6,6 +6,7 @@ import {
   X, 
   ExternalLink, 
   ChevronRight, 
+  ChevronLeft,
   Github, 
   Sparkles, 
   CheckCircle2, 
@@ -35,9 +36,10 @@ import {
   SiSupabase,
   SiNestjs,
   SiFlutter,
-  SiDart
+  SiDart,
+  SiTelegram
 } from 'react-icons/si';
-import { TbBrandOauth, TbDeviceGamepad2 } from 'react-icons/tb';
+import { TbBrandOauth, TbDeviceGamepad2, TbMail } from 'react-icons/tb';
 import { SectionHeading } from './UI';
 import { projects } from '../data/data';
 
@@ -80,6 +82,11 @@ const techIconMap = {
   'oauth': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
   'flutter': { icon: SiFlutter, color: '#47C5FB', name: 'Flutter' },
   'dart': { icon: SiDart, color: '#0175C2', name: 'Dart' },
+  'telegram': { icon: SiTelegram, color: '#26A5E4', name: 'Telegram Bot' },
+  'telegram bot': { icon: SiTelegram, color: '#26A5E4', name: 'Telegram Bot' },
+  'email': { icon: TbMail, color: '#EA4335', name: 'Email Alerts' },
+  'email alerts': { icon: TbMail, color: '#EA4335', name: 'Email Alerts' },
+  'email alert': { icon: TbMail, color: '#EA4335', name: 'Email Alerts' },
 };
 
 /* Tech Icon Badge – Only brand icon with accessible floating tooltip */
@@ -613,6 +620,124 @@ const ProjectCard = ({ project, index, onOpenModal }) => {
 };
 
 /* ────────────────────────────────────────────────────────────
+   Custom Professional Scrollbar Category Filter Bar
+   - Eliminates ugly Windows OS default scrollbars
+   - Glassmorphic track with interactive emerald glowing pill thumb
+   - Smooth left & right navigation buttons on overflow
+   - Natural mouse-wheel horizontal scrolling support
+   ──────────────────────────────────────────────────────────── */
+const CategoryFilterBar = ({ categories, activeCategory, onSelectCategory }) => {
+  const scrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const checkScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 6);
+    const maxScroll = scrollWidth - clientWidth;
+    if (maxScroll > 0) {
+      setScrollProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll)));
+    } else {
+      setScrollProgress(0);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    const handleResize = () => checkScroll();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [categories]);
+
+  const scrollByAmount = (amount) => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  const handleWheel = (e) => {
+    if (!scrollRef.current) return;
+    if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) {
+      scrollRef.current.scrollLeft += e.deltaY * 0.7;
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-1.5 w-full sm:max-w-md lg:max-w-lg">
+      <div className="relative flex items-center">
+        {/* Left Navigation Chevron */}
+        {canScrollLeft && (
+          <button
+            type="button"
+            onClick={() => scrollByAmount(-180)}
+            className="absolute -left-2 z-20 w-6 h-6 rounded-full bg-zinc-900/90 border border-white/15 text-zinc-300 hover:text-white hover:border-emerald-500/50 hover:bg-emerald-500/10 flex items-center justify-center shadow-lg transition-all duration-150 backdrop-blur-md"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft size={13} />
+          </button>
+        )}
+
+        {/* Scrollable Pills List */}
+        <div
+          ref={scrollRef}
+          onScroll={checkScroll}
+          onWheel={handleWheel}
+          className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5 scroll-smooth w-full"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => onSelectCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? 'bg-emerald-500 text-black font-semibold shadow-md shadow-emerald-500/25 ring-1 ring-emerald-400/30'
+                    : 'bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/5 hover:border-white/15'
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right Navigation Chevron */}
+        {canScrollRight && (
+          <button
+            type="button"
+            onClick={() => scrollByAmount(180)}
+            className="absolute -right-2 z-20 w-6 h-6 rounded-full bg-zinc-900/90 border border-white/15 text-zinc-300 hover:text-white hover:border-emerald-500/50 hover:bg-emerald-500/10 flex items-center justify-center shadow-lg transition-all duration-150 backdrop-blur-md"
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={13} />
+          </button>
+        )}
+      </div>
+
+      {/* Modern Emerald Glow Micro Scrollbar Track */}
+      {(canScrollLeft || canScrollRight) && (
+        <div className="w-full px-1">
+          <div className="h-[3px] w-full bg-white/[0.06] rounded-full overflow-hidden relative">
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-150 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+              style={{
+                width: '30%',
+                transform: `translateX(${scrollProgress * 233}%)`,
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ────────────────────────────────────────────────────────────
    Main Projects Section
    ──────────────────────────────────────────────────────────── */
 export const Projects = () => {
@@ -645,25 +770,12 @@ export const Projects = () => {
               Production web applications, real-time industrial SCADA systems, and full-stack solutions built with performance in mind.
             </p>
 
-            {/* Category Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${
-                      isActive
-                        ? 'bg-emerald-500 text-black font-semibold shadow-md shadow-emerald-500/20'
-                        : 'bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/5'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
+            {/* Category Filter Bar with Custom Professional Scrollbar */}
+            <CategoryFilterBar
+              categories={categories}
+              activeCategory={activeCategory}
+              onSelectCategory={setActiveCategory}
+            />
           </div>
         </div>
 

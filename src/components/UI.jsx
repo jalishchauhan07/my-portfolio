@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import ScrollArea from 'react-scrollbar';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 export const MagneticButton = ({ children, className }) => {
@@ -114,9 +115,10 @@ import {
   SiThreedotjs,
   SiFlutter,
   SiDart,
+  SiTelegram,
 } from 'react-icons/si';
 import { FaAws } from 'react-icons/fa6';
-import { TbBrandOpenai, TbDeviceGamepad2, TbBrandOauth, TbServer2, TbApi, TbDeviceMobile } from 'react-icons/tb';
+import { TbBrandOpenai, TbDeviceGamepad2, TbBrandOauth, TbServer2, TbApi, TbDeviceMobile, TbMail } from 'react-icons/tb';
 
 export const techIconMap = {
   'next.js': { icon: SiNextdotjs, color: '#ffffff', name: 'Next.js' },
@@ -175,6 +177,11 @@ export const techIconMap = {
   'dart': { icon: SiDart, color: '#0175C2', name: 'Dart' },
   'mobile': { icon: TbDeviceMobile, color: '#38BDF8', name: 'Mobile App' },
   'mobile app': { icon: TbDeviceMobile, color: '#38BDF8', name: 'Mobile App' },
+  'telegram': { icon: SiTelegram, color: '#26A5E4', name: 'Telegram Bot' },
+  'telegram bot': { icon: SiTelegram, color: '#26A5E4', name: 'Telegram Bot' },
+  'email': { icon: TbMail, color: '#EA4335', name: 'Email Alerts' },
+  'email alerts': { icon: TbMail, color: '#EA4335', name: 'Email Alerts' },
+  'email alert': { icon: TbMail, color: '#EA4335', name: 'Email Alerts' },
 };
 
 /* Tech Icon Badge – Only brand icon with accessible floating tooltip */
