@@ -1,36 +1,181 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import ScrollArea from 'react-scrollbar';
-import 'react-scrollbar/dist/css/scrollArea.css';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, ExternalLink, ChevronRight } from 'lucide-react';
+import { 
+  ArrowUpRight, 
+  X, 
+  ExternalLink, 
+  ChevronRight, 
+  Github, 
+  Sparkles, 
+  CheckCircle2, 
+  Layers, 
+  Globe,
+  Radio,
+  SlidersHorizontal
+} from 'lucide-react';
+import { 
+  SiNextdotjs, 
+  SiMongodb, 
+  SiTypescript, 
+  SiRazorpay, 
+  SiReact, 
+  SiNodedotjs, 
+  SiExpress, 
+  SiGooglemaps, 
+  SiJavascript, 
+  SiHtml5, 
+  SiMqtt 
+} from 'react-icons/si';
+import { TbBrandOauth, TbDeviceGamepad2 } from 'react-icons/tb';
 import { SectionHeading } from './UI';
 import { projects } from '../data/data';
 
-const getInitials = (title) => title.trim().substring(0, 2).toUpperCase();
+const techIconMap = {
+  'next.js': { icon: SiNextdotjs, color: '#ffffff', name: 'Next.js' },
+  'nextjs': { icon: SiNextdotjs, color: '#ffffff', name: 'Next.js' },
+  'mongodb': { icon: SiMongodb, color: '#47A248', name: 'MongoDB' },
+  'typescript': { icon: SiTypescript, color: '#3178C6', name: 'TypeScript' },
+  'razorpay': { icon: SiRazorpay, color: '#3395FF', name: 'Razorpay' },
+  'react': { icon: SiReact, color: '#61DAFB', name: 'React' },
+  'react.js': { icon: SiReact, color: '#61DAFB', name: 'React.js' },
+  'node.js': { icon: SiNodedotjs, color: '#5FA04E', name: 'Node.js' },
+  'nodejs': { icon: SiNodedotjs, color: '#5FA04E', name: 'Node.js' },
+  'express': { icon: SiExpress, color: '#ffffff', name: 'Express' },
+  'google maps': { icon: SiGooglemaps, color: '#EA4335', name: 'Google Maps' },
+  'javascript': { icon: SiJavascript, color: '#F7DF1E', name: 'JavaScript' },
+  'phaser': { icon: TbDeviceGamepad2, color: '#FA0064', name: 'Phaser' },
+  'html5 canvas': { icon: SiHtml5, color: '#E34F26', name: 'HTML5 Canvas' },
+  'canvas': { icon: SiHtml5, color: '#E34F26', name: 'HTML5 Canvas' },
+  'mqtt': { icon: SiMqtt, color: '#9C27B0', name: 'MQTT' },
+  'oauth 2.0': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
+  'oauth': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
+};
 
-const cardAccents = [
-  { glow: 'rgba(16,185,129,0.18)',  tagBg: 'rgba(16,185,129,0.12)',  tagText: '#6ee7b7', tagBorder: 'rgba(16,185,129,0.35)',  dot: '#34d399', badge: '#34d399' },
-  { glow: 'rgba(59,130,246,0.18)',  tagBg: 'rgba(59,130,246,0.12)',  tagText: '#93c5fd', tagBorder: 'rgba(59,130,246,0.35)',  dot: '#60a5fa', badge: '#60a5fa' },
-  { glow: 'rgba(249,115,22,0.18)',  tagBg: 'rgba(249,115,22,0.12)',  tagText: '#fdba74', tagBorder: 'rgba(249,115,22,0.35)',  dot: '#fb923c', badge: '#fb923c' },
-  { glow: 'rgba(139,92,246,0.18)',  tagBg: 'rgba(139,92,246,0.12)',  tagText: '#c4b5fd', tagBorder: 'rgba(139,92,246,0.35)',  dot: '#a78bfa', badge: '#a78bfa' },
-];
+/* Tech Icon Badge – Only brand icon with accessible floating tooltip */
+const TechIconBadge = ({ tech, size = 18, padding = 'p-2' }) => {
+  const key = tech?.toLowerCase().trim();
+  const match = techIconMap[key];
+  const Icon = match?.icon;
+  const color = match?.color || '#ffffff';
+  const label = match?.name || tech;
+
+  return (
+    <div
+      className={`group/tech relative ${padding} rounded-xl bg-white/[0.04] border border-white/10 hover:border-white/30 hover:bg-white/[0.08] transition-all duration-200 flex items-center justify-center cursor-default hover:scale-110 shadow-sm`}
+      title={label}
+    >
+      {Icon ? (
+        <Icon size={size} style={{ color }} className="flex-shrink-0 transition-transform duration-200" />
+      ) : (
+        <span className="text-[11px] font-mono text-zinc-300 px-1 font-semibold">{tech}</span>
+      )}
+
+      {/* Floating Tooltip */}
+      <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover/tech:opacity-100 pointer-events-none transition-all duration-150 transform translate-y-1 group-hover/tech:translate-y-0 z-30 whitespace-nowrap">
+        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-950 text-zinc-200 border border-white/15 shadow-2xl">
+          {label}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const getInitials = (title) => (title ? title.trim().substring(0, 2).toUpperCase() : 'PJ');
+
+// Helper to extract a clean display host/slug
+const getDisplayUrl = (url, fallback = 'app.local') => {
+  if (!url) return fallback;
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname + (parsed.pathname !== '/' ? parsed.pathname.replace(/\/$/, '') : '');
+  } catch {
+    return fallback;
+  }
+};
 
 /* ────────────────────────────────────────────────────────────
-   Modal – rendered in a Portal so it's always above the nav
+   Browser Mockup Chrome Component
+   Wraps screenshots in a realistic dark browser frame
    ──────────────────────────────────────────────────────────── */
-const ProjectModal = ({ project, index, onClose }) => {
+const BrowserMockup = ({ 
+  url, 
+  image, 
+  title, 
+  aspectRatio = 'aspect-[16/10]',
+  children,
+  className = ''
+}) => {
   const [imgError, setImgError] = useState(false);
-  const accent = cardAccents[index % cardAccents.length];
 
-  /* lock body scroll */
+  return (
+    <div className={`w-full rounded-2xl overflow-hidden border border-white/10 bg-[#121214] shadow-2xl transition-all duration-300 ${className}`}>
+      {/* Browser Top Navigation Bar */}
+      <div className="bg-[#18181b]/95 border-b border-white/[0.08] px-3.5 py-2.5 flex items-center justify-between gap-3 select-none">
+        {/* macOS window dots */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 transition-opacity hover:opacity-100" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 transition-opacity hover:opacity-100" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 transition-opacity hover:opacity-100" />
+        </div>
+
+        {/* Omnibox / URL Pill */}
+        <div className="flex items-center justify-center flex-1 max-w-xs mx-auto">
+          <div className="w-full flex items-center justify-center gap-1.5 px-3 py-1 rounded-md bg-black/40 border border-white/5 text-[11px] font-mono text-zinc-400 truncate">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0 animate-pulse" />
+            <span className="truncate">{getDisplayUrl(url, title.toLowerCase().replace(/\s+/g, '-') + '.dev')}</span>
+          </div>
+        </div>
+
+        {/* Right status icon */}
+        <div className="flex items-center gap-1.5 text-zinc-500 text-xs flex-shrink-0">
+          <Globe size={13} className="text-zinc-500" />
+        </div>
+      </div>
+
+      {/* Viewport / Screenshot Container */}
+      <div className={`relative w-full ${aspectRatio} overflow-hidden bg-[#0d0d0f] group/mockup`}>
+        {image && !imgError ? (
+          <img
+            src={image}
+            alt={title}
+            onError={() => setImgError(true)}
+            loading="lazy"
+            className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-950/80 text-zinc-600 gap-2">
+            <span className="text-5xl font-extrabold tracking-wider font-mono text-zinc-800">
+              {getInitials(title)}
+            </span>
+            <span className="text-xs uppercase tracking-widest text-zinc-600 font-mono">Live Demo</span>
+          </div>
+        )}
+
+        {/* Soft edge ambient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 pointer-events-none" />
+
+        {/* Optional inner overlay children (e.g. quick view hover button) */}
+        {children}
+      </div>
+    </div>
+  );
+};
+
+/* ────────────────────────────────────────────────────────────
+   Project Details Modal
+   ──────────────────────────────────────────────────────────── */
+const ProjectModal = ({ project, onClose }) => {
+  const isGithub = project.link?.includes('github.com');
+  const hasLiveDemo = project.link && !isGithub;
+  const githubUrl = project.github || (isGithub ? project.link : null);
+
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  /* close on Escape */
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handler);
@@ -39,195 +184,164 @@ const ProjectModal = ({ project, index, onClose }) => {
 
   const modal = (
     <AnimatePresence>
-      {/* full-screen overlay */}
       <motion.div
         key="modal-overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.22 }}
-        style={{
-          position: 'fixed', inset: 0,
-          zIndex: 99999,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '16px',
-        }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 md:p-6"
       >
-        {/* backdrop */}
+        {/* Backdrop */}
         <div
           onClick={onClose}
-          style={{
-            position: 'absolute', inset: 0,
-            background: 'rgba(0,0,0,0.82)',
-            backdropFilter: 'blur(18px)',
-            WebkitBackdropFilter: 'blur(18px)',
-          }}
+          className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"
         />
 
-        {/* dialog card */}
+        {/* Modal Window Card */}
         <motion.div
           key="modal-card"
-          initial={{ opacity: 0, scale: 0.93, y: 28 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.93, y: 28 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-          style={{
-            position: 'relative',
-            width: '100%', maxWidth: 640,
-            maxHeight: '88vh',
-            background: '#141414',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 28,
-            boxShadow: `0 40px 100px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.04)`,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+          className="relative w-full max-w-3xl max-h-[90vh] bg-[#121215] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10"
         >
-          {/* ── react-scrollbar ScrollArea ── */}
-          <ScrollArea
-            speed={0.8}
-            smoothScrolling
-            style={{ maxHeight: 'calc(88vh)', width: '100%' }}
-            verticalScrollbarStyle={{ borderRadius: 6, backgroundColor: 'rgba(16,185,129,0.5)' }}
-            verticalContainerStyle={{ borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.04)' }}
-          >
-
-            {/* Hero image */}
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '16/8', background: '#0a0a0a', flexShrink: 0 }}>
-              {project.image && !imgError ? (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  onError={() => setImgError(true)}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                />
-              ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 96, fontWeight: 900, color: 'rgba(255,255,255,0.06)', letterSpacing: '-0.05em' }}>
-                    {getInitials(project.title)}
-                  </span>
-                </div>
-              )}
-              {/* gradient vignette */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'linear-gradient(to top, #141414 0%, transparent 55%)',
-                pointerEvents: 'none',
-              }} />
+          {/* Header Bar */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-[#16161a]">
+            <div className="flex items-center gap-2.5">
+              <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                {project.category || 'Project Detail'}
+              </span>
+              <span className="text-zinc-500 text-xs hidden sm:inline">•</span>
+              <span className="text-zinc-400 text-xs font-mono hidden sm:inline">
+                {getDisplayUrl(project.link, 'app.portfolio.dev')}
+              </span>
             </div>
 
-            {/* Content */}
-            <div style={{ padding: '0 28px 32px', marginTop: -8 }}>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Close modal"
+            >
+              <X size={18} />
+            </button>
+          </div>
 
-              {/* Tag row */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  fontSize: 11, fontWeight: 700, letterSpacing: '0.04em',
-                  padding: '5px 12px', borderRadius: 99,
-                  background: accent.tagBg, color: accent.tagText, border: `1px solid ${accent.tagBorder}`,
-                }}>
-                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: accent.dot, flexShrink: 0 }} />
-                  Web Application
-                </span>
-                {project.tech.slice(0, 3).map((t, j) => (
-                  <span key={j} style={{
-                    fontSize: 11, fontFamily: 'monospace',
-                    padding: '5px 12px', borderRadius: 99,
-                    background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.55)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                  }}>
-                    {t}
+          {/* Modal Content Scroll Area */}
+          <div className="overflow-y-auto p-5 sm:p-7 space-y-6 custom-scroll">
+            {/* Embedded Framed Preview */}
+            <BrowserMockup
+              url={project.link}
+              image={project.image}
+              title={project.title}
+              aspectRatio="aspect-[16/9]"
+            />
+
+            {/* Title & Stats */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                  {project.title}
+                </h3>
+                {project.badge && (
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-zinc-300 border border-white/10 flex items-center gap-1.5">
+                    <Sparkles size={13} className="text-emerald-400" />
+                    {project.badge}
                   </span>
-                ))}
+                )}
               </div>
 
-              {/* Title */}
-              <h2 style={{ fontSize: 'clamp(1.6rem, 5vw, 2.25rem)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.2, margin: '0 0 12px' }}>
-                {project.title}
-              </h2>
-
-              <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', margin: '16px 0' }} />
-
-              {/* Description */}
-              <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 15, lineHeight: 1.75, fontWeight: 300, margin: '0 0 24px' }}>
+              <p className="text-zinc-300 text-sm sm:text-base leading-relaxed">
                 {project.description}
               </p>
-
-              {/* Stats grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 24 }}>
-                {[
-                  { label: 'Stack', value: project.tech[0] },
-                  { label: 'Type', value: 'Full Stack' },
-                  { label: 'Status', value: 'Live ✦' },
-                ].map((item, k) => (
-                  <div key={k} style={{
-                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 16, padding: '14px 12px', textAlign: 'center',
-                  }}>
-                    <p style={{ fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 6px' }}>
-                      {item.label}
-                    </p>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: k === 2 ? accent.badge : '#fff', margin: 0 }}>
-                      {item.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* All tech tags */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 28 }}>
-                {project.tech.map((t, j) => (
-                  <span key={j} style={{
-                    fontSize: 12, fontFamily: 'monospace', fontWeight: 500,
-                    padding: '6px 14px', borderRadius: 10,
-                    background: accent.tagBg, color: accent.tagText, border: `1px solid ${accent.tagBorder}`,
-                  }}>
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              {/* CTA */}
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  width: '100%', padding: '14px 20px', borderRadius: 16,
-                  background: '#fff', color: '#000', fontWeight: 700, fontSize: 14,
-                  letterSpacing: '0.02em', textDecoration: 'none',
-                  transition: 'background 0.2s',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#d1fae5'}
-                onMouseLeave={e => e.currentTarget.style.background = '#fff'}
-              >
-                <ExternalLink size={15} />
-                Open Live Project
-                <ChevronRight size={15} />
-              </a>
             </div>
-          </ScrollArea>
 
-          {/* Close button – always floats above scroll */}
-          <button
-            onClick={onClose}
-            style={{
-              position: 'absolute', top: 16, right: 16,
-              width: 36, height: 36, borderRadius: '50%',
-              background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255,255,255,0.18)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', transition: 'background 0.2s',
-              zIndex: 10,
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.65)'}
-          >
-            <X size={15} color="#fff" />
-          </button>
+            {/* Engineering Highlights */}
+            {project.highlights && project.highlights.length > 0 && (
+              <div className="p-4 sm:p-5 rounded-xl bg-white/[0.03] border border-white/5 space-y-3">
+                <h4 className="text-xs font-mono uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                  <CheckCircle2 size={14} className="text-emerald-400" />
+                  Key Engineering Highlights
+                </h4>
+                <div className="grid grid-cols-1 gap-2.5">
+                  {project.highlights.map((highlight, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
+                      <span>{highlight}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Metrics Card Grid */}
+            {project.stats && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span className="block text-[11px] font-mono text-zinc-500 uppercase tracking-wider">Highlight</span>
+                  <span className="block text-sm font-semibold text-white mt-1">{project.stats.metric}</span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span className="block text-[11px] font-mono text-zinc-500 uppercase tracking-wider">Focus</span>
+                  <span className="block text-sm font-semibold text-white mt-1">{project.stats.label}</span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 col-span-2 sm:col-span-1">
+                  <span className="block text-[11px] font-mono text-zinc-500 uppercase tracking-wider">Role</span>
+                  <span className="block text-sm font-semibold text-emerald-400 mt-1">{project.stats.role || 'Full Stack'}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Technologies */}
+            <div className="space-y-2">
+              <span className="block text-xs font-mono uppercase tracking-widest text-zinc-400">
+                Tech Stack
+              </span>
+              <div className="flex flex-wrap gap-2.5">
+                {project.tech.map((t, i) => (
+                  <TechIconBadge key={i} tech={t} size={22} padding="p-2.5" />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Modal Footer Actions */}
+          <div className="px-5 py-4 border-t border-white/10 bg-[#16161a] flex flex-wrap items-center justify-between gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl text-xs sm:text-sm font-medium text-zinc-400 hover:text-white transition-colors"
+            >
+              Close
+            </button>
+
+            <div className="flex items-center gap-2.5">
+              {githubUrl && hasLiveDemo && (
+                <a
+                  href={githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors"
+                >
+                  <Github size={15} />
+                  <span>Source Code</span>
+                </a>
+              )}
+
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-black transition-colors shadow-lg shadow-emerald-500/20"
+                >
+                  {isGithub ? <Github size={15} /> : null}
+                  <span>{hasLiveDemo ? 'Open Live Demo' : 'View on GitHub'}</span>
+                  {!isGithub ? <ExternalLink size={15} /> : null}
+                </a>
+              )}
+            </div>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
@@ -237,81 +351,114 @@ const ProjectModal = ({ project, index, onClose }) => {
 };
 
 /* ────────────────────────────────────────────────────────────
-   Featured Card (first project — full-width cinematic)
+   Featured Showcase Card (Panoramic Split Bento)
    ──────────────────────────────────────────────────────────── */
-const FeaturedCard = ({ project, index, onClick }) => {
-  const [imgError, setImgError] = useState(false);
-  const accent = cardAccents[index % cardAccents.length];
+const FeaturedProject = ({ project, onOpenModal }) => {
+  const isGithub = project.link?.includes('github.com');
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      onClick={onClick}
-      className="group"
-      style={{
-        position: 'relative', width: '100%', borderRadius: 24, overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
-        background: '#0d0d0d', transition: 'border-color 0.4s',
-        boxShadow: `0 0 60px ${accent.glow}`,
-      }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative w-full rounded-3xl bg-gradient-to-b from-white/[0.07] to-white/[0.02] p-1 border border-white/10 hover:border-emerald-500/30 transition-all duration-500 shadow-2xl shadow-black/80"
     >
-      {/* Image */}
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '21/9', overflow: 'hidden', background: '#111' }}>
-        {project.image && !imgError ? (
-          <img
-            src={project.image}
-            alt={project.title}
-            onError={() => setImgError(true)}
-            className="group-hover:scale-[1.04]"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s cubic-bezier(0.22,1,0.36,1)', display: 'block' }}
-          />
-        ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 140, fontWeight: 900, color: 'rgba(255,255,255,0.03)', letterSpacing: '-0.05em' }}>
-              {getInitials(project.title)}
-            </span>
-          </div>
-        )}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0d0d0d 0%, transparent 55%)', pointerEvents: 'none' }} />
-      </div>
+      <div className="relative rounded-[22px] bg-[#0e0e11]/90 p-5 sm:p-7 md:p-9 overflow-hidden">
+        {/* Subtle Ambient Radial Glow */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/[0.07] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Info bar */}
-      <div style={{ padding: '0 28px 28px', marginTop: -4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16 }}>
-        <div>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-            <span style={{
-              fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
-              padding: '4px 12px', borderRadius: 99,
-              background: accent.tagBg, color: accent.tagText, border: `1px solid ${accent.tagBorder}`,
-              display: 'flex', alignItems: 'center', gap: 6,
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: accent.dot, animation: 'pulse 2s infinite' }} />
-              Featured
-            </span>
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-10 items-center">
+          {/* Left Column: Project Details & Story */}
+          <div className="lg:col-span-5 space-y-5">
+            {/* Category / Status Pill */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-medium tracking-wide bg-emerald-500/10 text-emerald-300 border border-emerald-500/25">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Featured Project
+              </span>
+              <span className="text-zinc-500 text-xs font-mono">
+                {project.category}
+              </span>
+            </div>
+
+            {/* Title */}
+            <div>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight group-hover:text-white transition-colors">
+                {project.title}
+              </h3>
+              <p className="text-xs font-mono text-zinc-400 mt-1">
+                {project.badge || 'Web Application & Data Engine'}
+              </p>
+            </div>
+
+            {/* Description */}
+            <p className="text-zinc-300 text-sm sm:text-base leading-relaxed">
+              {project.description}
+            </p>
+
+            {/* Engineering Highlights */}
+            {project.highlights && (
+              <div className="space-y-2 pt-1 border-t border-white/5">
+                {project.highlights.slice(0, 3).map((highlight, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs sm:text-sm text-zinc-300 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                    <span>{highlight}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Tech Stack Brand Icons */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {project.tech.map((t, idx) => (
+                <TechIconBadge key={idx} tech={t} size={20} padding="p-2.5" />
+              ))}
+            </div>
+
+            {/* Call to Actions */}
+            <div className="flex flex-wrap items-center gap-3 pt-3">
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-white text-black hover:bg-emerald-300 transition-colors duration-200 shadow-md"
+              >
+                <span>{isGithub ? 'View Source' : 'Live Platform'}</span>
+                <ExternalLink size={14} />
+              </a>
+
+              <button
+                onClick={onOpenModal}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors duration-200"
+              >
+                <Layers size={14} className="text-emerald-400" />
+                <span>Deep Dive Details</span>
+              </button>
+            </div>
           </div>
-          <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.25rem)', fontWeight: 800, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.1, margin: 0 }}>
-            {project.title}
-          </h3>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, marginTop: 8, maxWidth: 480 }} className="line-clamp-2">
-            {project.description}
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'flex-end' }}>
-            {project.tech.slice(0, 3).map((t, j) => (
-              <span key={j} style={{ fontSize: 11, fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.1)', padding: '3px 10px', borderRadius: 8 }}>{t}</span>
-            ))}
-          </div>
-          <div className="group-hover:bg-white group-hover:border-white" style={{
-            width: 44, height: 44, borderRadius: 14,
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-            transition: 'background 0.3s, border-color 0.3s',
-          }}>
-            <ArrowUpRight size={18} className="group-hover:text-black" style={{ color: 'rgba(255,255,255,0.5)', transition: 'color 0.3s' }} />
+
+          {/* Right Column: Framed Device Preview */}
+          <div className="lg:col-span-7">
+            <div 
+              onClick={onOpenModal} 
+              className="cursor-pointer group/frame relative transition-transform duration-500 lg:group-hover:-translate-y-1"
+            >
+              <BrowserMockup
+                url={project.link}
+                image={project.image}
+                title={project.title}
+                aspectRatio="aspect-[16/10]"
+              >
+                {/* Hover overlay hint */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/frame:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+                  <div className="px-4 py-2 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-semibold flex items-center gap-2 shadow-2xl">
+                    <Layers size={14} className="text-emerald-400" />
+                    <span>Click for Deep Dive & Architecture</span>
+                  </div>
+                </div>
+              </BrowserMockup>
+            </div>
           </div>
         </div>
       </div>
@@ -320,77 +467,115 @@ const FeaturedCard = ({ project, index, onClick }) => {
 };
 
 /* ────────────────────────────────────────────────────────────
-   Grid Card (remaining projects)
+   Grid Card for Remaining Projects
    ──────────────────────────────────────────────────────────── */
-const GridCard = ({ project, index, onClick }) => {
-  const [imgError, setImgError] = useState(false);
-  const accent = cardAccents[index % cardAccents.length];
+const ProjectCard = ({ project, index, onOpenModal }) => {
+  const isGithub = project.link?.includes('github.com');
+  const hasLiveDemo = project.link && !isGithub;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.7, delay: (index % 2) * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      onClick={onClick}
-      className="group"
-      style={{
-        position: 'relative', borderRadius: 20, overflow: 'hidden',
-        border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
-        background: '#0d0d0d', transition: 'border-color 0.4s',
-        boxShadow: `0 0 40px ${accent.glow}`,
-        display: 'flex', flexDirection: 'column',
-      }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative flex flex-col rounded-2xl bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-1 border border-white/10 hover:border-emerald-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/5"
     >
-      {/* Image */}
-      <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', background: '#111' }}>
-        {project.image && !imgError ? (
-          <img
-            src={project.image}
-            alt={project.title}
-            onError={() => setImgError(true)}
-            className="group-hover:scale-[1.06]"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s ease-out', display: 'block' }}
-          />
-        ) : (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 90, fontWeight: 900, color: 'rgba(255,255,255,0.04)', letterSpacing: '-0.05em', lineHeight: 1 }}>
-              {getInitials(project.title)}
-            </span>
-          </div>
-        )}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0d0d0d 0%, transparent 50%)', pointerEvents: 'none' }} />
-        <div className="opacity-0 group-hover:opacity-100" style={{
-          position: 'absolute', top: 14, right: 14,
-          width: 38, height: 38, borderRadius: 12,
-          background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'opacity 0.3s',
-        }}>
-          <ArrowUpRight size={16} color="#fff" />
+      <div className="flex-1 flex flex-col rounded-[14px] bg-[#0e0e11] overflow-hidden">
+        {/* Browser Mockup Header */}
+        <div 
+          onClick={onOpenModal}
+          className="cursor-pointer"
+        >
+          <BrowserMockup
+            url={project.link}
+            image={project.image}
+            title={project.title}
+            aspectRatio="aspect-[16/10]"
+          >
+            {/* Quick hover button */}
+            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span className="p-2 rounded-lg bg-black/75 backdrop-blur-md border border-white/20 text-white flex items-center justify-center shadow-lg">
+                <ArrowUpRight size={14} />
+              </span>
+            </div>
+          </BrowserMockup>
         </div>
-      </div>
 
-      {/* Info */}
-      <div style={{ padding: '18px 20px 22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
-          {project.tech.slice(0, 2).map((t, j) => (
-            <span key={j} style={{
-              fontSize: 10, fontFamily: 'monospace', fontWeight: 600,
-              padding: '4px 10px', borderRadius: 8,
-              background: accent.tagBg, color: accent.tagText, border: `1px solid ${accent.tagBorder}`,
-            }}>{t}</span>
-          ))}
-        </div>
-        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: '0 0 6px', lineHeight: 1.3 }}>
-          {project.title}
-        </h3>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, flex: 1, margin: 0 }} className="line-clamp-3">
-          {project.description}
-        </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 14, fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.3)' }} className="group-hover:text-white/60" >
-          View Details <ChevronRight size={13} />
+        {/* Card Body */}
+        <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+          <div className="space-y-2.5">
+            {/* Category / Badge */}
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-emerald-400 font-medium">
+                {project.category || 'Engineering'}
+              </span>
+              {project.stats?.metric && (
+                <span className="text-zinc-500">
+                  {project.stats.metric}
+                </span>
+              )}
+            </div>
+
+            {/* Title */}
+            <h4 
+              onClick={onOpenModal}
+              className="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors cursor-pointer tracking-tight"
+            >
+              {project.title}
+            </h4>
+
+            {/* Description */}
+            <p className="text-zinc-400 text-xs sm:text-sm line-clamp-3 leading-relaxed">
+              {project.description}
+            </p>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            {/* Tech Tags - Brand Icons Only */}
+            <div className="flex flex-wrap gap-1.5">
+              {project.tech.map((t, idx) => (
+                <TechIconBadge key={idx} tech={t} size={15} padding="p-1.5" />
+              ))}
+            </div>
+
+            {/* Action Bar */}
+            <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+              <button
+                onClick={onOpenModal}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-300 hover:text-white transition-colors"
+              >
+                <span>Details</span>
+                <ChevronRight size={14} className="text-emerald-400" />
+              </button>
+
+              <div className="flex items-center gap-2">
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                    title="Source Code"
+                  >
+                    <Github size={15} />
+                  </a>
+                )}
+
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  >
+                    <span>{hasLiveDemo ? 'Live Demo' : 'Code'}</span>
+                    <ExternalLink size={12} />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -398,33 +583,95 @@ const GridCard = ({ project, index, onClick }) => {
 };
 
 /* ────────────────────────────────────────────────────────────
-   Main Section
+   Main Projects Section
    ──────────────────────────────────────────────────────────── */
 export const Projects = () => {
-  const [selected, setSelected] = useState(null);
-  const [featured, ...rest] = projects;
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  // Categories list derived from projects
+  const categories = ['All', 'Full Stack SaaS', 'Industrial IoT', 'Enterprise Operations', 'Interactive & Games'];
+
+  const filteredProjects = activeCategory === 'All'
+    ? projects
+    : projects.filter(p => p.category === activeCategory);
+
+  // On "All", present the flagship project in panoramic featured layout and the rest in grid.
+  // On a specific category filter, present all matched projects in the sleek grid layout.
+  const isAll = activeCategory === 'All';
+  const featured = isAll ? filteredProjects[0] : null;
+  const remaining = isAll ? filteredProjects.slice(1) : filteredProjects;
 
   return (
-    <section id="projects" className="w-full py-32 px-5 md:px-10 relative z-10">
-      <div className="max-w-6xl mx-auto w-full">
-        <SectionHeading number="01" title="Selected Works" />
+    <section id="projects" className="w-full pt-28 pb-32 px-5 md:px-10 relative z-10">
+      <div className="max-w-6xl mx-auto w-full space-y-10">
+        {/* Section Header */}
+        <div className="space-y-4">
+          <SectionHeading number="01" title="Selected Works" />
+          
+          {/* Section Subheading & Filter Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 -mt-8">
+            <p className="text-sm md:text-base text-zinc-400 max-w-xl">
+              Production web applications, real-time industrial SCADA systems, and full-stack solutions built with performance in mind.
+            </p>
 
-        <div style={{ marginBottom: 20 }}>
-          <FeaturedCard project={featured} index={0} onClick={() => setSelected({ project: featured, index: 0 })} />
+            {/* Category Filter Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {categories.map((cat) => {
+                const isActive = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${
+                      isActive
+                        ? 'bg-emerald-500 text-black font-semibold shadow-md shadow-emerald-500/20'
+                        : 'bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] border border-white/5'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 18 }}>
-          {rest.map((project, i) => (
-            <GridCard key={i} project={project} index={i + 1} onClick={() => setSelected({ project, index: i + 1 })} />
-          ))}
-        </div>
+        {/* Featured Card (When Available) */}
+        {featured && (
+          <FeaturedProject
+            project={featured}
+            onOpenModal={() => setSelectedProject(featured)}
+          />
+        )}
+
+        {/* Grid for Remaining Projects */}
+        {remaining.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+            {remaining.map((project, idx) => (
+              <ProjectCard
+                key={project.title}
+                project={project}
+                index={idx}
+                onOpenModal={() => setSelectedProject(project)}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Fallback if filtered category has 0 items */}
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-16 text-zinc-500 font-mono text-sm">
+            No projects found in this category.
+          </div>
+        )}
       </div>
 
-      {selected && (
+      {/* Interactive Modal */}
+      {selectedProject && (
         <ProjectModal
-          project={selected.project}
-          index={selected.index}
-          onClose={() => setSelected(null)}
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
         />
       )}
     </section>
