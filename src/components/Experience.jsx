@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, ChevronRight, Briefcase, Sparkles, CheckCircle2, Clock } from 'lucide-react';
-import { SectionHeading } from './UI';
+import { SectionHeading, TechIconBadge } from './UI';
 import { experience } from '../data/data';
 
 const formatDate = (dateStr) => {
@@ -162,6 +162,11 @@ export const Experience = () => {
                             <p className="text-base sm:text-lg text-emerald-400 font-semibold tracking-wide">
                               @ {exp.company}
                             </p>
+                            {exp.summary && (
+                              <p className="text-xs sm:text-sm text-zinc-300 mt-1 leading-relaxed max-w-xl">
+                                {exp.summary}
+                              </p>
+                            )}
                           </div>
                         </div>
 
@@ -200,14 +205,9 @@ export const Experience = () => {
                           <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 block mb-2">
                             Technologies & Frameworks
                           </span>
-                          <div className="flex flex-wrap gap-1.5">
+                          <div className="flex flex-wrap gap-2 items-center">
                             {exp.skills.map((skill, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2.5 py-1 rounded-lg text-xs font-mono bg-white/[0.03] text-zinc-300 border border-white/5 hover:border-white/15 transition-colors"
-                              >
-                                {skill}
-                              </span>
+                              <TechIconBadge key={idx} tech={skill} size={20} padding="p-2.5" />
                             ))}
                           </div>
                         </div>

@@ -5,6 +5,7 @@ export const experience = [
   {
     title: "Software Developer",
     company: "ABJ Experts",
+    summary: "Built scalable cloud SaaS applications and intelligent document processing workflows for enterprise users.",
     logo: "/logos/abj-experts-logo.jpg",
     logoBg: "bg-white",
     logoFit: "cover",
@@ -12,59 +13,62 @@ export const experience = [
     startDate: "2025-12-01",
     endDate: "Current",
     roleType: "Full-Time",
-    skills: ["Next.js", "React", "Supabase", "LangChain", "OpenAI", "MERN"],
+    skills: ["Next.js", "React", "Supabase", "LangChain", "OpenAI"],
     description: [
-      "Designed and developed a scalable SaaS-based web application using the MERN stack with Next.js for SSR and performance optimization.",
-      "Integrated Supabase for authentication, database management, and real-time data handling.",
-      "Built AI-powered features like document processing, contextual search, and intelligent responses using LangChain and OpenAI."
+      "Built high-performance web applications with seamless user sign-in and real-time team collaboration.",
+      "Integrated AI-powered search and document analysis tools that automate routine workflows for users.",
+      "Maintained reliable cloud databases and real-time data synchronization across user accounts."
     ],
   },
   {
     title: "Full Stack Developer",
     company: "Digilize Solution",
+    summary: "Architected anti-counterfeiting verification portals and automated factory packaging traceability platforms.",
     logo: "/logos/digilize-logo.png",
     logoBg: "bg-emerald-500",
     location: "Ahmedabad, India",
     startDate: "2024-10-01",
     endDate: "2025-12-01",
     roleType: "Full-Time",
-    skills: ["Next.js", "PostgreSQL", "Prisma ORM", "TypeScript", "SSR"],
+    skills: ["Next.js", "React.js", "PostgreSQL", "Prisma ORM", "TypeScript"],
     description: [
-      "Developed responsive web applications using Next.js with SSR and SSG for performance and SEO.",
-      "Managed PostgreSQL databases and handled large-scale data migration and synchronization.",
-      "Used Prisma ORM for efficient database queries and schema migrations."
+      "Developed consumer verification portals enabling buyers to authenticate genuine products via on-pack QR codes.",
+      "Automated batch serialization and live printer monitoring systems for industrial packaging lines.",
+      "Managed relational database migrations and automated scheduled backups to safeguard production data."
     ],
   },
   {
     title: "Backend Developer",
     company: "Dicot Innovation",
+    summary: "Engineered core backend APIs, secure transaction gateways, and automated cloud deployments.",
     logo: "/logos/dicot-logo.svg",
     logoBg: "bg-white",
     location: "Ahmedabad, India",
     startDate: "2023-09-01",
     endDate: "2024-10-01",
     roleType: "Full-Time",
-    skills: ["Express.js", "Node.js", "Razorpay", "AWS", "REST APIs"],
+    skills: ["Express.js", "Node.js", "Razorpay", "AWS"],
     description: [
-      "Developed backend systems and REST APIs using Express.js.",
-      "Integrated Razorpay payment gateway for secure online transactions.",
-      "Automated deployment to Vercel, Render, and AWS using secure workflows."
+      "Engineered reliable backend REST APIs to handle customer account transactions and reporting.",
+      "Integrated secure online payment gateways for frictionless digital checkouts.",
+      "Automated cloud deployment workflows to maintain high server availability and fast updates."
     ],
   },
   {
     title: "Web Developer",
     company: "Yudiz Solution",
+    summary: "Developed interactive 2D/3D browser applications with real-time multiplayer networking and smooth physics.",
     logo: "/logos/yudiz-logo.svg",
     logoBg: "bg-white",
     location: "Ahmedabad, India",
     startDate: "2023-02-01",
     endDate: "2023-08-01",
     roleType: "Full-Time",
-    skills: ["Phaser.js", "Three.js", "Socket.io", "JavaScript", "HTML5 Canvas"],
+    skills: ["Phaser.js", "Three.js", "Socket.io", "JavaScript"],
     description: [
-      "Developed interactive 2D/3D web applications using Phaser.js and Three.js.",
-      "Implemented real-time communication using Socket.io.",
-      "Enhanced user experience with animations and cross-device optimization."
+      "Created engaging interactive web applications, animations, and responsive browser experiences.",
+      "Implemented real-time data sync for multiplayer interactions and live room communication.",
+      "Optimized touch controls and rendering performance to ensure smooth cross-device gameplay."
     ],
   }
 ];
