@@ -33,7 +33,9 @@ import {
   SiPostgresql,
   SiGithubactions,
   SiSupabase,
-  SiNestjs
+  SiNestjs,
+  SiFlutter,
+  SiDart
 } from 'react-icons/si';
 import { TbBrandOauth, TbDeviceGamepad2 } from 'react-icons/tb';
 import { SectionHeading } from './UI';
@@ -76,6 +78,8 @@ const techIconMap = {
   'nestjs': { icon: SiNestjs, color: '#E0234E', name: 'Nest.js' },
   'oauth 2.0': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
   'oauth': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
+  'flutter': { icon: SiFlutter, color: '#47C5FB', name: 'Flutter' },
+  'dart': { icon: SiDart, color: '#0175C2', name: 'Dart' },
 };
 
 /* Tech Icon Badge – Only brand icon with accessible floating tooltip */
@@ -616,7 +620,7 @@ export const Projects = () => {
   const [activeCategory, setActiveCategory] = useState('All');
 
   // Categories list derived from projects
-  const categories = ['All', 'Full Stack SaaS', 'Industrial IoT', 'Enterprise Operations', 'Interactive & Games'];
+  const categories = ['All', 'Full Stack SaaS', 'Industrial IoT', 'Mobile App', 'Enterprise Operations', 'Interactive & Games'];
 
   const filteredProjects = activeCategory === 'All'
     ? projects

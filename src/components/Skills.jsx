@@ -31,7 +31,9 @@ import {
   SiSocketdotio,
   SiMqtt,
   SiHtml5,
-  SiLangchain
+  SiLangchain,
+  SiFlutter,
+  SiDart,
 } from 'react-icons/si';
 import { FaAws } from 'react-icons/fa6';
 import { TbBrandOpenai } from 'react-icons/tb';
@@ -41,6 +43,7 @@ const skillCategories = [
   'All Stack',
   'Frontend',
   'Backend',
+  'Mobile',
   'Databases & Storage',
   'DevOps & Cloud',
   'Real-Time & IIoT'
@@ -101,6 +104,26 @@ const skillsData = [
     color: '#ffffff',
     Icon: SiFramer,
     description: 'Fluid spring physics, layout animations, modal gestures, and immersive page transitions.'
+  },
+
+  // Mobile
+  {
+    name: 'Flutter',
+    category: 'Mobile',
+    type: 'Mobile Framework',
+    level: 'Advanced',
+    color: '#47C5FB',
+    Icon: SiFlutter,
+    description: 'Cross-platform mobile applications for Android & iOS with smooth 60fps telemetry dashboards and native device APIs.'
+  },
+  {
+    name: 'Dart',
+    category: 'Mobile',
+    type: 'Language',
+    level: 'Advanced',
+    color: '#0175C2',
+    Icon: SiDart,
+    description: 'Object-oriented, strongly typed client-optimized language for reactive, responsive Flutter applications.'
   },
 
   // Backend

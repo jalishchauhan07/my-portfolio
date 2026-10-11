@@ -5,7 +5,7 @@ export const experience = [
   {
     title: "Software Developer",
     company: "ABJ Experts",
-    summary: "Built scalable cloud SaaS applications and intelligent document processing workflows for enterprise users.",
+    summary: "Engineered scalable cloud SaaS platforms, AI document intelligence pipelines, and real-time collaboration features for enterprise clients.",
     logo: "/logos/abj-experts-logo.jpg",
     logoBg: "bg-white",
     logoFit: "cover",
@@ -13,51 +13,52 @@ export const experience = [
     startDate: "2025-12-01",
     endDate: "Current",
     roleType: "Full-Time",
-    skills: ["Next.js", "React", "Supabase", "LangChain", "OpenAI"],
+    skills: ["Next.js", "React.js", "TypeScript", "Supabase", "LangChain", "OpenAI"],
     description: [
-      "Built high-performance web applications with seamless user sign-in and real-time team collaboration.",
-      "Integrated AI-powered search and document analysis tools that automate routine workflows for users.",
-      "Maintained reliable cloud databases and real-time data synchronization across user accounts."
+      "Built enterprise SaaS web applications with responsive dashboards, role-based permissions, and real-time workspace collaboration.",
+      "Integrated AI-powered document processing workflows to analyze unstructured business files and automate routine tasks.",
+      "Architected cloud database schemas with automated synchronization to keep distributed team data accurate and secure."
     ],
   },
   {
     title: "Full Stack Developer",
     company: "Digilize Solution",
-    summary: "Architected anti-counterfeiting verification portals and automated factory packaging traceability platforms.",
+    summary: "Architected consumer anti-counterfeit portals and automated packaging line traceability MES platforms.",
     logo: "/logos/digilize-logo.png",
     logoBg: "bg-emerald-500",
     location: "Ahmedabad, India",
     startDate: "2024-10-01",
     endDate: "2025-12-01",
     roleType: "Full-Time",
-    skills: ["Next.js", "React.js", "PostgreSQL", "Prisma ORM", "TypeScript"],
+    skills: ["Next.js", "React.js", "PostgreSQL", "Prisma ORM", "TypeScript", "Redis"],
     description: [
-      "Developed consumer verification portals enabling buyers to authenticate genuine products via on-pack QR codes.",
-      "Automated batch serialization and live printer monitoring systems for industrial packaging lines.",
-      "Managed relational database migrations and automated scheduled backups to safeguard production data."
+      "Developed public product authentication portals allowing consumers to instantly verify batch authenticity via on-pack QR codes.",
+      "Automated industrial packaging line serialization with live printer monitoring and automated error diagnostics.",
+      "Implemented automated database backup and recovery workflows for PostgreSQL with scheduled cron jobs and custom storage paths."
     ],
   },
   {
-    title: "Backend Developer",
+    title: "Software Developer - Backend & Mobile",
     company: "Dicot Innovation",
-    summary: "Engineered core backend APIs, secure transaction gateways, and automated cloud deployments.",
+    summary: "Engineered scalable backend REST services, secure transaction gateways, and a cross-platform Flutter mobile application replicating the Vision Web industrial monitoring system.",
     logo: "/logos/dicot-logo.svg",
     logoBg: "bg-white",
     location: "Ahmedabad, India",
     startDate: "2023-09-01",
     endDate: "2024-10-01",
     roleType: "Full-Time",
-    skills: ["Express.js", "Node.js", "Razorpay", "AWS"],
+    skills: ["Flutter", "Dart", "Node.js", "Express.js", "AWS", "MongoDB", "Razorpay"],
     description: [
-      "Engineered reliable backend REST APIs to handle customer account transactions and reporting.",
-      "Integrated secure online payment gateways for frictionless digital checkouts.",
-      "Automated cloud deployment workflows to maintain high server availability and fast updates."
+      "Developed a cross-platform mobile application using Flutter that replicated the exact live monitoring experience and sensor telemetry of Vision Web.",
+      "Built real-time machine telemetry dashboards and instant threshold push alerts, empowering plant managers to monitor factory operations on the go.",
+      "Engineered reliable backend REST APIs and integrated secure payment gateways for automated transaction processing.",
+      "Managed AWS cloud infrastructure and continuous deployment pipelines to maintain high availability and seamless data synchronization."
     ],
   },
   {
     title: "Web Developer",
     company: "Yudiz Solution",
-    summary: "Developed interactive 2D/3D browser applications with real-time multiplayer networking and smooth physics.",
+    summary: "Developed interactive 2D browser games and real-time multiplayer networking systems.",
     logo: "/logos/yudiz-logo.svg",
     logoBg: "bg-white",
     location: "Ahmedabad, India",
@@ -67,8 +68,8 @@ export const experience = [
     skills: ["Phaser.js", "Three.js", "Socket.io", "JavaScript"],
     description: [
       "Created engaging interactive web applications, animations, and responsive browser experiences.",
-      "Implemented real-time data sync for multiplayer interactions and live room communication.",
-      "Optimized touch controls and rendering performance to ensure smooth cross-device gameplay."
+      "Implemented real-time bidirectional data synchronization using WebSockets for multiplayer interactions and live rooms.",
+      "Optimized rendering loops and asset caching to maintain smooth 60 FPS gameplay across mobile and desktop devices."
     ],
   }
 ];
@@ -135,6 +136,22 @@ export const projects = [
     ],
     stats: { metric: "Real-time Telemetry", label: "Industrial Monitor", role: "Full Stack & IIoT" },
     tech: ["TypeScript", "MongoDB", "Express.js", "GitHub Actions"],
+    link: "https://vision-web.tech",
+    github: null,
+  },
+  {
+    title: "Vision Mobile",
+    category: "Mobile App",
+    badge: "Cross-Platform IIoT App",
+    image: "/projects/vision-mobile.jpg",
+    description: "A cross-platform mobile application developed with Flutter that delivers the exact real-time industrial monitoring capabilities of Vision Web to handheld devices. Plant managers and floor engineers can monitor live machinery telemetry, review operational metrics, and receive instant threshold push alerts anywhere on the facility floor.",
+    highlights: [
+      "Exact mobile reproduction of the Vision Web industrial telemetry dashboard",
+      "Real-time sensor data streaming with instant critical threshold push alerts",
+      "Native cross-platform performance on Android and iOS built with Flutter and Dart"
+    ],
+    stats: { metric: "Cross-Platform", label: "Mobile IIoT App", role: "Mobile Developer" },
+    tech: ["Flutter", "Dart", "Node.js", "Express.js", "MongoDB"],
     link: "https://vision-web.tech",
     github: null,
   },

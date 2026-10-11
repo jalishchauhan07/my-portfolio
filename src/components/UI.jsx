@@ -112,9 +112,11 @@ import {
   SiGithubactions,
   SiLangchain,
   SiThreedotjs,
+  SiFlutter,
+  SiDart,
 } from 'react-icons/si';
 import { FaAws } from 'react-icons/fa6';
-import { TbBrandOpenai, TbDeviceGamepad2, TbBrandOauth, TbServer2, TbApi } from 'react-icons/tb';
+import { TbBrandOpenai, TbDeviceGamepad2, TbBrandOauth, TbServer2, TbApi, TbDeviceMobile } from 'react-icons/tb';
 
 export const techIconMap = {
   'next.js': { icon: SiNextdotjs, color: '#ffffff', name: 'Next.js' },
@@ -169,6 +171,10 @@ export const techIconMap = {
   'mqtt': { icon: SiMqtt, color: '#9C27B0', name: 'MQTT' },
   'oauth 2.0': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
   'oauth': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
+  'flutter': { icon: SiFlutter, color: '#47C5FB', name: 'Flutter' },
+  'dart': { icon: SiDart, color: '#0175C2', name: 'Dart' },
+  'mobile': { icon: TbDeviceMobile, color: '#38BDF8', name: 'Mobile App' },
+  'mobile app': { icon: TbDeviceMobile, color: '#38BDF8', name: 'Mobile App' },
 };
 
 /* Tech Icon Badge – Only brand icon with accessible floating tooltip */
