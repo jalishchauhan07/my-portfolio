@@ -358,7 +358,14 @@ export const Skills = () => {
         </div>
 
         {/* ── Category Filter Tabs ── */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none pt-2">
+        <div 
+          className="flex items-center gap-2 overflow-x-auto pb-2.5 custom-scrollbar pt-2 scroll-smooth"
+          onWheel={(e) => {
+            if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) {
+              e.currentTarget.scrollLeft += e.deltaY * 0.8;
+            }
+          }}
+        >
           {skillCategories.map((category) => {
             const isActive = activeTab === category;
             return (

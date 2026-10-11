@@ -684,8 +684,7 @@ const CategoryFilterBar = ({ categories, activeCategory, onSelectCategory }) => 
           ref={scrollRef}
           onScroll={checkScroll}
           onWheel={handleWheel}
-          className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5 scroll-smooth w-full"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar py-1 px-0.5 scroll-smooth w-full"
         >
           {categories.map((cat) => {
             const isActive = activeCategory === cat;

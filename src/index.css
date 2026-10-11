@@ -23,42 +23,50 @@
    Universal Professional Dark Scrollbars (Chrome, Edge, Safari, Opera)
    Prevents any ugly default Windows OS grey scrollbars across the portfolio
    ──────────────────────────────────────────────────────────── */
+*::-webkit-scrollbar,
 ::-webkit-scrollbar {
   width: 6px;
   height: 5px;
 }
 
+*::-webkit-scrollbar-track,
 ::-webkit-scrollbar-track {
-  background: rgba(10, 10, 12, 0.6);
+  background: rgba(10, 10, 14, 0.8) !important;
 }
 
+*::-webkit-scrollbar-thumb,
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.18) !important;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.2s ease;
 }
 
+*::-webkit-scrollbar-thumb:hover,
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.6);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.7) !important;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
 }
 
+*::-webkit-scrollbar-button,
 ::-webkit-scrollbar-button {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
 }
 
+*::-webkit-scrollbar-corner,
 ::-webkit-scrollbar-corner {
   display: none !important;
   background: transparent !important;
 }
 
-/* Firefox Universal Thin Scrollbars */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+/* Firefox Only: Apply standard scrollbars where WebKit is not supported */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 185, 129, 0.5) transparent;
+  }
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -81,13 +89,8 @@
 
 /* ────────────────────────────────────────────────────────────
    Micro Sleek Scrollbars (Horizontal & Vertical)
+   Guaranteed NO Windows arrow buttons and pure glassmorphic track
    ──────────────────────────────────────────────────────────── */
-.custom-scroll,
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(16, 185, 129, 0.4) transparent;
-}
-
 .custom-scroll::-webkit-scrollbar,
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
@@ -96,21 +99,36 @@
 
 .custom-scroll::-webkit-scrollbar-track,
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 9999px;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb,
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.4);
   border-radius: 9999px;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb:hover,
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.75);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.85);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.custom-scroll::-webkit-scrollbar-button,
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .custom-scroll,
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 185, 129, 0.4) transparent;
+  }
 }
 
 /* ────────────────────────────────────────────────────────────

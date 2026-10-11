@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Calendar, ChevronRight, Briefcase, Sparkles, CheckCircle2, Clock } from 'lucide-react';
-import { SectionHeading, TechIconBadge } from './UI';
+import { SectionHeading, TechIconBadge, LiveExperienceCounter } from './UI';
 import { experience } from '../data/data';
 
 const formatDate = (dateStr) => {
@@ -30,15 +30,18 @@ export const Experience = () => {
       <div className="max-w-6xl mx-auto w-full space-y-10">
         <SectionHeading title="Experience" />
 
-        {/* Section Tagline */}
-        <p className="text-sm md:text-base text-zinc-400 max-w-xl -mt-8">
-          Career progression across full-stack product development, real-time industrial IIoT platforms, and cloud deployments.
-        </p>
+        {/* Section Tagline & Live Career Tracker */}
+        <div className="space-y-4 -mt-8">
+          <p className="text-sm md:text-base text-zinc-400 max-w-xl">
+            Career progression across full-stack product development, real-time industrial IIoT platforms, and cloud deployments.
+          </p>
+          <LiveExperienceCounter startDateStr="2023-02-01T00:00:00" className="w-full" />
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 w-full pt-4">
           
           {/* ── LEFT: Company Selector & Timeline Track ── */}
-          <div className="flex flex-row lg:flex-col gap-3 lg:gap-3.5 overflow-x-auto lg:overflow-visible w-full lg:w-[320px] xl:w-[360px] flex-shrink-0 pb-3 lg:pb-0 scrollbar-none snap-x snap-mandatory">
+          <div className="flex flex-row lg:flex-col gap-3 lg:gap-3.5 overflow-x-auto lg:overflow-visible w-full lg:w-[320px] xl:w-[360px] flex-shrink-0 pb-3 lg:pb-0 custom-scrollbar snap-x snap-mandatory">
             {experience.map((exp, i) => {
               const isActive = activeIndex === i;
               const isCurrent = exp.endDate === 'Current';
