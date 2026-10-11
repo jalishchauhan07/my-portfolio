@@ -4,7 +4,8 @@ import { SectionHeading, MagneticButton } from './UI';
 import { Github, Linkedin } from 'lucide-react';
 import {
   SiReact, SiNextdotjs, SiTypescript, SiNodedotjs,
-  SiExpress, SiMongodb, SiPostgresql, SiPrisma,
+  SiExpress, SiNestjs, SiMongodb, SiPostgresql,
+  SiSupabase, SiRedis, SiPrisma,
   SiDocker, SiTailwindcss, SiFramer,
 } from 'react-icons/si';
 import { FaAws } from 'react-icons/fa6';
@@ -15,8 +16,11 @@ const skills = [
   { name: 'TypeScript',    Icon: SiTypescript,       color: '#3178C6' },
   { name: 'Node.js',       Icon: SiNodedotjs,        color: '#5FA04E' },
   { name: 'Express',       Icon: SiExpress,          color: '#ffffff' },
+  { name: 'Nest.js',       Icon: SiNestjs,           color: '#E0234E' },
   { name: 'MongoDB',       Icon: SiMongodb,          color: '#47A248' },
   { name: 'PostgreSQL',    Icon: SiPostgresql,       color: '#4169E1' },
+  { name: 'Supabase',      Icon: SiSupabase,         color: '#3FCF8E' },
+  { name: 'Redis',         Icon: SiRedis,            color: '#DC382D' },
   { name: 'Prisma',        Icon: SiPrisma,           color: '#ffffff' },
   { name: 'AWS',           Icon: FaAws,              color: '#FF9900' },
   { name: 'Docker',        Icon: SiDocker,           color: '#2496ED' },
@@ -28,7 +32,7 @@ export const Skills = () => {
   return (
     <section id="skills" className="w-full py-32 px-6 relative z-10">
       <div className="max-w-6xl mx-auto w-full">
-        <SectionHeading number="003" title="Expertise" />
+        <SectionHeading title="Expertise" />
 
         <div className="flex flex-wrap gap-3 mt-12">
           {skills.map((skill, i) => (

@@ -25,7 +25,15 @@ import {
   SiGooglemaps, 
   SiJavascript, 
   SiHtml5, 
-  SiMqtt 
+  SiMqtt,
+  SiPrisma,
+  SiRedis,
+  SiSocketdotio,
+  SiReacthookform,
+  SiPostgresql,
+  SiGithubactions,
+  SiSupabase,
+  SiNestjs
 } from 'react-icons/si';
 import { TbBrandOauth, TbDeviceGamepad2 } from 'react-icons/tb';
 import { SectionHeading } from './UI';
@@ -42,12 +50,30 @@ const techIconMap = {
   'node.js': { icon: SiNodedotjs, color: '#5FA04E', name: 'Node.js' },
   'nodejs': { icon: SiNodedotjs, color: '#5FA04E', name: 'Node.js' },
   'express': { icon: SiExpress, color: '#ffffff', name: 'Express' },
+  'express.js': { icon: SiExpress, color: '#ffffff', name: 'Express.js' },
+  'postgresql': { icon: SiPostgresql, color: '#4169E1', name: 'PostgreSQL' },
+  'postgres': { icon: SiPostgresql, color: '#4169E1', name: 'PostgreSQL' },
+  'github actions': { icon: SiGithubactions, color: '#2088FF', name: 'GitHub Actions' },
+  'github flow': { icon: SiGithubactions, color: '#2088FF', name: 'GitHub Flow' },
+  'ci/cd': { icon: SiGithubactions, color: '#2088FF', name: 'CI/CD' },
+  'prisma': { icon: SiPrisma, color: '#ffffff', name: 'Prisma ORM' },
+  'prisma orm': { icon: SiPrisma, color: '#ffffff', name: 'Prisma ORM' },
+  'redis': { icon: SiRedis, color: '#DC382D', name: 'Redis' },
+  'socket.io': { icon: SiSocketdotio, color: '#ffffff', name: 'Socket.io' },
+  'socketio': { icon: SiSocketdotio, color: '#ffffff', name: 'Socket.io' },
+  'react from': { icon: SiReacthookform, color: '#EC5990', name: 'React Form' },
+  'reactform': { icon: SiReacthookform, color: '#EC5990', name: 'React Form' },
+  'react form': { icon: SiReacthookform, color: '#EC5990', name: 'React Form' },
+  'react hook form': { icon: SiReacthookform, color: '#EC5990', name: 'React Hook Form' },
   'google maps': { icon: SiGooglemaps, color: '#EA4335', name: 'Google Maps' },
   'javascript': { icon: SiJavascript, color: '#F7DF1E', name: 'JavaScript' },
   'phaser': { icon: TbDeviceGamepad2, color: '#FA0064', name: 'Phaser' },
   'html5 canvas': { icon: SiHtml5, color: '#E34F26', name: 'HTML5 Canvas' },
   'canvas': { icon: SiHtml5, color: '#E34F26', name: 'HTML5 Canvas' },
   'mqtt': { icon: SiMqtt, color: '#9C27B0', name: 'MQTT' },
+  'supabase': { icon: SiSupabase, color: '#3FCF8E', name: 'Supabase' },
+  'nest.js': { icon: SiNestjs, color: '#E0234E', name: 'Nest.js' },
+  'nestjs': { icon: SiNestjs, color: '#E0234E', name: 'Nest.js' },
   'oauth 2.0': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
   'oauth': { icon: TbBrandOauth, color: '#EB5424', name: 'OAuth 2.0' },
 };
@@ -607,7 +633,7 @@ export const Projects = () => {
       <div className="max-w-6xl mx-auto w-full space-y-10">
         {/* Section Header */}
         <div className="space-y-4">
-          <SectionHeading number="01" title="Selected Works" />
+          <SectionHeading title="Selected Works" />
           
           {/* Section Subheading & Filter Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 -mt-8">

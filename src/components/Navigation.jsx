@@ -51,9 +51,11 @@ export const Navigation = ({ activeSection }) => {
             className="flex items-center gap-2 pl-3 pr-3.5 py-1.5 rounded-full hover:bg-white/5 transition-colors group"
             title="Go to Home"
           >
-            <span className="w-6 h-6 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-xs font-bold text-white group-hover:scale-105 transition-transform">
-              JC
-            </span>
+            <img
+              src="/favicon.png"
+              alt="JC"
+              className="w-6 h-6 rounded-full object-cover border border-emerald-500/30 group-hover:scale-105 transition-transform shadow-sm"
+            />
             <span className="text-xs font-semibold tracking-wide text-zinc-200 group-hover:text-white transition-colors">
               Jalish
             </span>
@@ -105,9 +107,11 @@ export const Navigation = ({ activeSection }) => {
       <header className="fixed top-0 left-0 right-0 z-50 md:hidden p-3 sm:p-4">
         <div className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-[#0d0d10]/90 backdrop-blur-xl border border-white/10 shadow-2xl">
           <a href="#home" className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-xs font-bold text-white">
-              JC
-            </span>
+            <img
+              src="/favicon.png"
+              alt="JC"
+              className="w-7 h-7 rounded-full object-cover border border-emerald-500/30 shadow-sm"
+            />
             <span className="text-sm font-bold text-white tracking-tight">Jalish Chauhan</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           </a>

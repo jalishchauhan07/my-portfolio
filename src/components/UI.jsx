@@ -77,7 +77,9 @@ export const TiltCard = ({ children, className }) => {
 
 export const SectionHeading = ({ number, title }) => (
   <div className="flex items-center gap-6 mb-16">
-    <span className="text-emerald-500 font-mono text-sm tracking-widest uppercase">0{number}</span>
+    {number && (
+      <span className="text-emerald-500 font-mono text-sm tracking-widest uppercase">{number}</span>
+    )}
     <h2 className="text-3xl md:text-5xl font-semibold text-white tracking-tight">
       {title}
     </h2>

@@ -28,7 +28,7 @@ export const Experience = () => {
   return (
     <section id="experience" className="w-full py-28 px-5 md:px-10 lg:px-16 relative z-10">
       <div className="max-w-6xl mx-auto w-full space-y-10">
-        <SectionHeading number="02" title="Experience" />
+        <SectionHeading title="Experience" />
 
         {/* Section Tagline */}
         <p className="text-sm md:text-base text-zinc-400 max-w-xl -mt-8">
@@ -55,13 +55,7 @@ export const Experience = () => {
                       : 'border-white/[0.06] bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]'
                   }`}
                 >
-                  {/* Left Active Indicator Bar */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeRoleBar"
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-r"
-                    />
-                  )}
+
 
                   <div className="flex items-center gap-3.5">
                     {/* Company Logo / Fallback */}
