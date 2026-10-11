@@ -52,14 +52,14 @@ const engineeringChallenges = [
   },
   {
     id: 'anti-counterfeit-scale',
-    title: 'High-Concurrency Anti-Counterfeit Batch Authentication',
-    category: 'Enterprise SaaS',
+    title: 'Unique Product Code Verification & Live Expiry Status',
+    category: 'Consumer SaaS',
     project: 'Product View',
     experienceCompany: 'Digilize Solution',
-    impactMetric: 'Sub-Second Verify',
-    challenge: 'Millions of simultaneous consumer on-pack QR scans during nationwide product rollouts created sudden read spikes on the batch database while demanding cryptographic tamper-proof validation.',
-    solution: 'Architected multi-tier edge caching and lightweight cryptographic hash verification, delivering sub-second authenticity responses for consumers.',
-    outcome: 'Instant authenticity verification on low-bandwidth mobile networks, protecting enterprise brand equity and consumer safety.'
+    impactMetric: 'Sub-Second Expiry Check',
+    challenge: 'Consumers and supply chain distributors needed to enter or scan a Unique Product Code (UID) to retrieve genuine product information and immediately verify whether an item is actively safe or expired, during nationwide peak scan surges.',
+    solution: 'Architected a low-latency edge verification engine that resolves unique serialized codes against batch timelines, instantly calculating live shelf-life to verify whether the product is valid or expired, alongside certified lab reports.',
+    outcome: 'Protects consumer health by preventing consumption of expired or counterfeit goods through sub-second mobile verification and tamper-proof digital certificates.'
   },
   {
     id: 'mobile-web-parity',

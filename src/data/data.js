@@ -97,13 +97,14 @@ export const projects = [
     category: "Full Stack SaaS",
     badge: "Anti-Counterfeit Portal",
     image: "/projects/product-view.jpg",
-    description: "An anti-counterfeiting and product authentication platform that enables consumers and distributors to verify genuine products by scanning a QR code on the packaging. It instantly displays batch authenticity, manufacturing and expiry dates, facility details, and certified lab reports, helping companies protect brand trust and prevent fake goods.",
+    description: "An anti-counterfeiting and consumer authentication portal requiring a Unique Product Code (UID or on-pack QR code) to retrieve verified product information. Using this unique code, the platform instantly queries batch records to evaluate whether the product is actively valid or expired, alongside manufacturing and expiry dates, facility origin, and certified lab reports to prevent counterfeit and expired goods from reaching consumers.",
     highlights: [
-      "Instant mobile verification for consumers by scanning on-pack QR codes",
-      "Real-time display of batch authenticity, expiry dates, and lab test reports",
-      "Automated digital certificate delivery for supply chain transparency"
+      "Requires Unique Product Code (UID) to retrieve genuine product and batch information",
+      "Real-time expiry validation determining whether the product is active or expired",
+      "Instant mobile verification for consumers and distributors via on-pack QR code scanning",
+      "Tamper-proof digital certificates, manufacturing timestamps, and certified lab reports"
     ],
-    stats: { metric: "Live Verification", label: "Anti-Counterfeit", role: "Full Stack Developer" },
+    stats: { metric: "Live Verification", label: "Anti-Counterfeit & Expiry", role: "Full Stack Developer" },
     tech: ["Next.js", "React.js", "JavaScript", "Prisma ORM", "Express.js", "React Form"],
     link: "https://dev.digilize.in",
     github: "https://github.com/digilize-innovators/InspectaTrace_ProductView_FrontEnd",
